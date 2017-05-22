@@ -1,69 +1,116 @@
-var main(){
-    
-    //socket.io initialization
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
-    var room = location.pathname;
-    
+var FPS = 60;
 
-    socket.on('connect', function() {
-        socket.emit('init', {room: room});
-    });
+var gamestate = {};
 
-    socket.on('update', function(msg) {
-        if(!isPuzzle) return;
-        if(msg['uid']!==puzzle.uid){
-            setAlert('Puzzle out of date; please refresh page');
-            return;
-        }
+var canvas;
+var ctx;
 
-        var cell = msg['cell'];
-        var value = msg['value'];
+var interval = 1000/FPS;
+var lastTime = (new Date()).getTime();
+var currentTime = 0;
 
-        gridTextDOM[cell].text(value);
+var socket = io();
 
-        greyOutClue(puzzle.grid[cell].acrossClue);
-        greyOutClue(puzzle.grid[cell].downClue);
+// keyboard input
+var KEY_LEFT  = 37;
+var KEY_UP    = 38;
+var KEY_RIGHT = 39;
+var KEY_DOWN =  40;
 
-        if(msg['solved']){
-            setAlert('Good job! You solved the puzzle!');
-        }
-    });
+var keysDown = {};
+addEventListener("keydown", function(e) {
+  keysDown[e.keyCode] = true;
+}, false);
 
-    socket.on('update_all', function(msg) {
-        if(!isPuzzle) return;
+addEventListener("keyup", function(e) {
+  keysDown[e.keyCode] = false;
+}, false);
 
-        if(msg['uid']!==puzzle.uid){
-            setAlert('Puzzle out of date; please refresh page.');
-            return;
-        }
+function Rectangle(x, y, w, h){
+  return {
+    x: x,
+    y: y,
+    width: w,
+    height: h,
+    render: function() {
+      ctx.fillStyle = '#ff0';
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+  };
+}
 
-        for(var i=0;i<gridDOM.length;i++){
-            gridTextDOM[i].text(msg.data[i]);
-        }
+function update()
+{
+  if (keysDown[KEY_LEFT]){
+    gamestate.rect.x -= 10;
+  }else if(keysDown[KEY_RIGHT]){
+    gamestate.rect.x += 10;
+  }
 
-        for(var i=0;i<puzzle.clues.length;i++){
-            greyOutClue(i);
-        }
+  if (keysDown[KEY_UP]){
+    gamestate.rect.y -= 10;
+  }else if(keysDown[KEY_DOWN]){
+    gamestate.rect.y += 10;
+  }
 
-        if(msg['solved']){
-            setAlert('Good job! You solved the puzzle!');
-        }
-    });
+  socket.emit('update', {x: gamestate.rect.x, y: gamestate.rect.y});
+}
 
-    socket.on('update_puzzle', function(puzzleData) {
-        initialize(puzzleData);
-    });
+function render() {
+  // clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgb(200, 200, 200)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    socket.on('error', function(message) {
-        switch(message.code){
-            case 'REFR':
-                setAlert('Puzzle out of date; please refresh page');
-                break;
+  gamestate.rect.render();
+}
 
-            default:
-                break;
-        }
-    });
-};
+function loop(){
+  window.requestAnimationFrame(loop);
 
-$(document).ready(main);
+  currentTime = (new Date()).getTime();
+  delta = currentTime - lastTime;
+
+  if(delta > interval){
+    update();
+    render();
+
+    lastTime = currentTime;
+  }  
+}
+
+function initializeGame()
+{
+  console.log("Hi!");
+
+  // initialize canvas and render objects
+  var gameDiv = document.getElementById('game');
+  canvas = document.createElement('canvas');
+  canvas.width = 750;
+  canvas.height = 350;
+  gameDiv.appendChild(canvas);
+  
+  ctx = canvas.getContext("2d");
+
+  // initialize gamestate
+  gamestate.rect = Rectangle(10, 10, 50, 50);
+
+  loop();
+}
+
+socket.on('update', function(msg){
+  gamestate.rect.x = msg.x;
+  gamestate.rect.y = msg.y;
+});
+
+/*$(function () {
+  var socket = io();
+  $('form').submit(function(){
+    socket.emit('chat message', $('#m').val());
+    $('#m').val('');
+    return false;
+  });
+  socket.on('chat message', function(msg){
+    $('#messages').append($('<li>').text(msg));
+  });
+});*/
