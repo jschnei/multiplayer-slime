@@ -1,21 +1,31 @@
-var FPS = 60;
+var FPS = 30;
 
 var gamestate = {};
 
 var canvas;
 var ctx;
 
-var interval = 1000/FPS;
+var interval = 1000./FPS;
 var lastTime = (new Date()).getTime();
 var currentTime = 0;
+var curFrame = 0;
 
 var socket = io();
+var myId = -1;
+var numPlayers = 2;
+var inputs = [{}, {}]; // should replace dicts with large circular buffers
+var buffer = 3;
+
+// game parameters
+const SPEED = 10;
 
 // keyboard input
-var KEY_LEFT  = 37;
-var KEY_UP    = 38;
-var KEY_RIGHT = 39;
-var KEY_DOWN =  40;
+const KEY_LEFT  = 37;
+const KEY_UP    = 38;
+const KEY_RIGHT = 39;
+const KEY_DOWN =  40;
+
+const KEY_LIST = [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN];
 
 var keysDown = {};
 addEventListener("keydown", function(e) {
@@ -26,7 +36,13 @@ addEventListener("keyup", function(e) {
   keysDown[e.keyCode] = false;
 }, false);
 
-function Rectangle(x, y, w, h){
+// player
+
+function haveInputs(frame){
+  return (inputs[0][frame] != null && inputs[1][frame] != null);
+}
+
+function Player(x, y, w, h){
   return {
     x: x,
     y: y,
@@ -39,21 +55,34 @@ function Rectangle(x, y, w, h){
   };
 }
 
+function emitKeys()
+{
+  var keys = KEY_LIST.map(function(keyCode){
+    return keysDown[keyCode];
+  });
+  socket.emit('update', {frame: curFrame, 
+                         player: myId,
+                         keys: keys});
+  // update own keylist
+  inputs[myId][curFrame + buffer] = keys;
+}
+
 function update()
 {
-  if (keysDown[KEY_LEFT]){
-    gamestate.rect.x -= 10;
-  }else if(keysDown[KEY_RIGHT]){
-    gamestate.rect.x += 10;
-  }
+  for(var id=0;id<numPlayers;id++){
+    var keys = inputs[id][curFrame];
+    if (keys[0]){
+      gamestate.players[id].x -= SPEED;
+    }else if(keys[1]){
+      gamestate.players[id].x += SPEED;
+    }
 
-  if (keysDown[KEY_UP]){
-    gamestate.rect.y -= 10;
-  }else if(keysDown[KEY_DOWN]){
-    gamestate.rect.y += 10;
+    if (keys[2]){
+      gamestate.players[id].y -= SPEED;
+    }else if(keys[3]){
+      gamestate.players[id].y += SPEED;
+    }
   }
-
-  socket.emit('update', {x: gamestate.rect.x, y: gamestate.rect.y});
 }
 
 function render() {
@@ -62,7 +91,9 @@ function render() {
   ctx.fillStyle = "rgb(200, 200, 200)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  gamestate.rect.render();
+  gamestate.players.forEach(function(player){
+    player.render();
+  });
 }
 
 function loop(){
@@ -72,17 +103,21 @@ function loop(){
   delta = currentTime - lastTime;
 
   if(delta > interval){
-    update();
-    render();
+    if(haveInputs(curFrame)){
+      update();
+      render();
+      emitKeys();
 
-    lastTime = currentTime;
+      lastTime = currentTime;
+      curFrame += 1;
+    }else{
+      console.log("Waiting for input for frame " + curFrame);
+    }
   }  
 }
 
 function initializeGame()
 {
-  console.log("Hi!");
-
   // initialize canvas and render objects
   var gameDiv = document.getElementById('game');
   canvas = document.createElement('canvas');
@@ -93,24 +128,25 @@ function initializeGame()
   ctx = canvas.getContext("2d");
 
   // initialize gamestate
-  gamestate.rect = Rectangle(10, 10, 50, 50);
+  gamestate.players = [Player(10, 10, 50, 50), Player(60, 60, 50, 50)];
 
-  loop();
+  // initialize inputs
+  for(var i=0;i<buffer;i++){
+    for(var j=0;j<numPlayers;j++){
+      inputs[j][i] = Array.prototype.map(function(){return 0;}, KEY_LIST);
+    }
+  }
 }
 
-socket.on('update', function(msg){
-  gamestate.rect.x = msg.x;
-  gamestate.rect.y = msg.y;
+// learn id
+socket.on('init', function(msg){
+  myId = msg.playerId;
 });
 
-/*$(function () {
-  var socket = io();
-  $('form').submit(function(){
-    socket.emit('chat message', $('#m').val());
-    $('#m').val('');
-    return false;
-  });
-  socket.on('chat message', function(msg){
-    $('#messages').append($('<li>').text(msg));
-  });
-});*/
+socket.on('start', function(msg){
+  loop();
+});
+
+socket.on('update', function(msg){
+  inputs[msg.player][msg.frame + buffer] = msg.keys;
+});

@@ -3,6 +3,9 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+const numPlayers = 2;
+var playerId = 0;
+
 app.use('/static', express.static('static'));
 
 app.get('/', function(req, res){
@@ -10,11 +13,22 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  console.log('connection established');
-  socket.on('update', function(msg){
-//    console.log('message: ' + msg.x + ' ' + msg.y);
-    io.emit('update', msg);
-  });
+  if(playerId >= numPlayers){
+    console.log('game at player cap');
+    socket.emit('gameFull');
+  }else{
+    console.log('player ' + playerId + ' connecting');
+    socket.emit('init', {playerId: playerId});
+
+    playerId++;
+    if(playerId == numPlayers){
+      io.emit('start');
+    }
+
+    socket.on('update', function(msg){
+      io.emit('update', msg);
+    });
+  }
 });
 
 http.listen(3000, function(){
