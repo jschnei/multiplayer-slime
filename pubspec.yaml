@@ -1,0 +1,7 @@
+name: multiplayer_slime
+version: 0.0.1
+description: >
+  HTML5 port of Slime Volleyball with networked multiplayer.
+dependencies:
+  socket_io_client:
+    git: git://github.com/rikulo/socket.io-client-dart.git
