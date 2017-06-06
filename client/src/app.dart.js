@@ -10096,7 +10096,7 @@
             t4 = this.y;
             if (typeof t4 !== "number")
               return t4.$lt();
-            t4 = t4 < 60;
+            t4 = t4 < 70;
           } else
             t4 = false;
         else
@@ -10106,12 +10106,12 @@
             t4 = this.y;
             if (typeof t4 !== "number")
               return t4.$gt();
-            t4 = t4 > 50;
+            t4 = t4 > 65;
           } else
             t4 = false;
           if (t4) {
             this.velocityY = t2 * -1;
-            this.y = 50;
+            this.y = 65;
             t1 = t3;
           } else if (t3 < 500) {
             this.x = 480;
