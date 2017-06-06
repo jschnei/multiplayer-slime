@@ -15,7 +15,7 @@ const MAX_VELOCITY_Y:number = 11;
 const NUM_PLAYERS = 2;
 const BUFFER = 3;
 
-module NetworkGame{
+namespace NetworkGame{
   let gameState:GameState;
 
   let canvas: HTMLCanvasElement;
@@ -110,10 +110,7 @@ module NetworkGame{
   }
 
   function haveInputs(frame: number){
-    return inputs[frame].every(function(input:PlayerInput){
-      return (input != null);
-    });
-    //(inputs[frame][0] != null && inputs[frame][1] != null);
+    return (inputs[frame][0] != null && inputs[frame][1] != null);
   }
 
   function loop(){
@@ -136,16 +133,16 @@ module NetworkGame{
     }  
   }
 
-  function initializeGame()
+  export function initializeGame()
   {
     // initialize canvas and render objects
-    let gameDiv = document.getElementById('game');
+    let gameDiv = document.getElementById('game') as HTMLElement;
     canvas = document.createElement('canvas');
     canvas.width = 730;
     canvas.height = 365;
     gameDiv.appendChild(canvas);
     
-    ctx = canvas.getContext("2d");
+    ctx = canvas.getContext("2d")!;
 
     gameState = new SlimeVolleyball.Game();
 
@@ -185,10 +182,7 @@ module NetworkGame{
   });
 }
 
-
-
-
-module SlimeVolleyball
+namespace SlimeVolleyball
 {
   import Input = NetworkGame.Input;
 
@@ -411,4 +405,8 @@ module SlimeVolleyball
       }
     }
   }
+}
+
+function main(){
+  NetworkGame.initializeGame();
 }
