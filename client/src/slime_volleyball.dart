@@ -177,6 +177,22 @@ class Ball extends GameObject {
       velocityX = -velocityX;
     }
 
+    // detect net collisions
+        // hits the post
+    if (x > 480 && x < 520 && y < 140) {
+      // bounces off top of net
+      if (velocityY < 0 && y > 130) {
+        velocityY *= -1;
+        y = 130;
+      } else if (x < 500) { // hits side of net
+        x = 480;
+        velocityX = velocityX >= 0 ? -velocityX : velocityX;
+      } else {
+        x = 520;
+        velocityX = velocityX <= 0 ? -velocityX : velocityX;
+      }
+    }
+
     if(y < 0){
       if(x > 500){
         GameObject.game.initRound(true);

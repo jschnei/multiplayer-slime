@@ -9990,7 +9990,7 @@
         ctx.fill("nonzero");
       },
       update$0: function() {
-        var t1, t2, t3, _i, slime, t4, dx, dy, dist, t5, t6, t7, t8, something;
+        var t1, t2, t3, t4, t0, _i, slime, dx, dy, dist, t5, t6, t7, t8, something;
         t1 = this.x;
         t2 = this.velocityX;
         if (typeof t1 !== "number")
@@ -10007,40 +10007,43 @@
         this.y = t1 + t3;
         t3 -= 0.5;
         this.velocityY = t3;
-        if (t3 < -11)
+        if (t3 < -11) {
           this.velocityY = -11;
-        for (t1 = $.GameObject_game.slimes, t1.length, t3 = this.radius, _i = 0; _i < 2; ++_i) {
-          slime = t1[_i];
-          t2 = this.x;
-          t4 = slime.x;
-          if (typeof t2 !== "number")
-            return t2.$sub();
-          if (typeof t4 !== "number")
-            return H.iae(t4);
-          dx = t2 - t4;
-          t4 = this.y;
-          t2 = slime.y;
-          if (typeof t4 !== "number")
-            return t4.$sub();
+          t1 = -11;
+        } else
+          t1 = t3;
+        for (t3 = $.GameObject_game.slimes, t3.length, t4 = this.radius, t0 = t2, t2 = t1, t1 = t0, _i = 0; _i < 2; ++_i) {
+          slime = t3[_i];
+          t1 = this.x;
+          t2 = slime.x;
+          if (typeof t1 !== "number")
+            return t1.$sub();
           if (typeof t2 !== "number")
             return H.iae(t2);
-          dy = t4 - t2;
-          dist = Math.sqrt(dx * dx + dy * dy);
-          t2 = this.velocityX;
-          t4 = slime.velocityX;
+          dx = t1 - t2;
+          t2 = this.y;
+          t1 = slime.y;
           if (typeof t2 !== "number")
             return t2.$sub();
-          if (typeof t4 !== "number")
-            return H.iae(t4);
+          if (typeof t1 !== "number")
+            return H.iae(t1);
+          dy = t2 - t1;
+          dist = Math.sqrt(dx * dx + dy * dy);
+          t1 = this.velocityX;
+          t2 = slime.velocityX;
+          if (typeof t1 !== "number")
+            return t1.$sub();
+          if (typeof t2 !== "number")
+            return H.iae(t2);
           t5 = this.velocityY;
           t6 = slime.velocityY;
           if (typeof t5 !== "number")
             return t5.$sub();
           if (typeof t6 !== "number")
             return H.iae(t6);
-          if (dy > 0 && dist < t3 + slime.radius) {
+          if (dy > 0 && dist < t4 + slime.radius) {
             t7 = slime.x;
-            t8 = slime.radius + t3;
+            t8 = slime.radius + t4;
             if (typeof t7 !== "number")
               return t7.$add();
             this.x = t7 + t8 * dx / dist;
@@ -10048,43 +10051,79 @@
             if (typeof t7 !== "number")
               return t7.$add();
             this.y = t7 + t8 * dy / dist;
-            something = (dx * (t2 - t4) + dy * (t5 - t6)) / dist;
+            something = (dx * (t1 - t2) + dy * (t5 - t6)) / dist;
             if (something <= 0) {
-              t2 += t4 - 1.92 * dx * something / dist;
-              this.velocityX = t2;
+              t1 += t2 - 1.92 * dx * something / dist;
+              this.velocityX = t1;
               t6 = t5 + (t6 - 1.92 * dy * something / dist);
               this.velocityY = t6;
-              if (t2 < -15) {
+              if (t1 < -15) {
                 this.velocityX = -15;
-                t2 = -15;
-              } else if (t2 > 15) {
+                t1 = -15;
+              } else if (t1 > 15) {
                 this.velocityX = 15;
-                t2 = 15;
+                t1 = 15;
               }
               if (t6 < -11) {
                 this.velocityY = -11;
-                t4 = -11;
+                t2 = -11;
               } else if (t6 > 11) {
                 this.velocityY = 11;
-                t4 = 11;
+                t2 = 11;
               } else
-                t4 = t6;
+                t2 = t6;
             } else
-              t4 = t5;
-          }
+              t2 = t5;
+          } else
+            t2 = t5;
         }
-        t1 = this.x;
-        if (typeof t1 !== "number")
-          return t1.$sub();
-        if (t1 - t3 < 0) {
+        t3 = this.x;
+        if (typeof t3 !== "number")
+          return t3.$sub();
+        if (t3 - t4 < 0) {
+          this.x = t4;
+          t1 = -t1;
+          this.velocityX = t1;
+          t3 = t4;
+        } else if (t3 + t4 > 1000) {
+          t3 = 1000 - t4;
           this.x = t3;
-          this.velocityX = -t2;
-          t1 = t3;
-        } else if (t1 + t3 > 1000) {
-          t1 = 1000 - t3;
-          this.x = t1;
-          this.velocityX = -t2;
+          t1 = -t1;
+          this.velocityX = t1;
         }
+        if (t3 > 480)
+          if (t3 < 520) {
+            t4 = this.y;
+            if (typeof t4 !== "number")
+              return t4.$lt();
+            t4 = t4 < 140;
+          } else
+            t4 = false;
+        else
+          t4 = false;
+        if (t4) {
+          if (t2 < 0) {
+            t4 = this.y;
+            if (typeof t4 !== "number")
+              return t4.$gt();
+            t4 = t4 > 130;
+          } else
+            t4 = false;
+          if (t4) {
+            this.velocityY = t2 * -1;
+            this.y = 130;
+            t1 = t3;
+          } else if (t3 < 500) {
+            this.x = 480;
+            this.velocityX = t1 >= 0 ? -t1 : t1;
+            t1 = 480;
+          } else {
+            this.x = 520;
+            this.velocityX = t1 <= 0 ? -t1 : t1;
+            t1 = 520;
+          }
+        } else
+          t1 = t3;
         t2 = this.y;
         if (typeof t2 !== "number")
           return t2.$lt();
