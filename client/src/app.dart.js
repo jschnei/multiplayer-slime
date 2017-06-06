@@ -9836,12 +9836,10 @@
     main_closure: {
       "^": "Closure:18;",
       call$1: function(e) {
-        var data, t1, type;
+        var data, t1;
         data = C.JsonCodec_null_null.decode$1(J.get$data$x(e));
         t1 = J.getInterceptor$asx(data);
-        type = t1.$index(data, "type");
-        P.print(data);
-        switch (type) {
+        switch (t1.$index(data, "type")) {
           case "init":
             $.myId = t1.$index(data, "playerId");
             break;
@@ -9919,19 +9917,16 @@
     Slime: {
       "^": "GameObject;radius,color,leftBoundary,rightBoundary,x,y,velocityX,velocityY",
       render$2: function(ctx, canvas) {
-        var t1, t2, t3, t4;
-        t1 = this.radius;
-        t2 = this.color;
-        P.print("Rendering a slime: (x, y, r, color) = (" + H.S(this.x) + ", " + H.S(this.y) + ", " + t1 + ", " + t2 + ")");
-        t3 = this.x;
-        if (typeof t3 !== "number")
-          return t3.$mul();
-        t4 = this.y;
-        if (typeof t4 !== "number")
-          return t4.$mul();
-        ctx.fillStyle = t2;
+        var t1, t2;
+        t1 = this.x;
+        if (typeof t1 !== "number")
+          return t1.$mul();
+        t2 = this.y;
+        if (typeof t2 !== "number")
+          return t2.$mul();
+        ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(t3 * 0.73, 292 - t4 * 0.73, t1 * 0.73, 3.141592653589793, 6.283185307179586, false);
+        ctx.arc(t1 * 0.73, 292 - t2 * 0.73, this.radius * 0.73, 3.141592653589793, 6.283185307179586, false);
         ctx.fill("nonzero");
       },
       update$0: function() {

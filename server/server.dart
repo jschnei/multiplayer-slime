@@ -8,7 +8,6 @@ int playerId = 0;
 
 void handleWebSocket(WebSocket webSocket) {
   webSocket.map(JSON.decode).listen((json) {
-    print(json);
     String type = json["type"];
     switch (type) {
       case "update":
@@ -51,6 +50,7 @@ main() async {
         }
       }
     } else {
+      print("Error: game is full");
       webSocket.addError("Error: game is full");
     }
   }

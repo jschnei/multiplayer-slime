@@ -107,7 +107,6 @@ class Slime extends GameObject {
 
   void render(CanvasRenderingContext2D ctx,
               CanvasElement canvas){
-    print("Rendering a slime: (x, y, r, color) = ($x, $y, $radius, $color)");
     final xPix = x * PIXELS_PER_UNIT;
     final yPix = COURT_Y - y * PIXELS_PER_UNIT;
 

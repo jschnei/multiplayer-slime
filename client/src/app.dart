@@ -173,7 +173,6 @@ void main() {
   ws.onMessage.listen((MessageEvent e){
     var data = JSON.decode(e.data);
     String type = data["type"];
-    print(data);
     
     switch(type){
       case "init":
