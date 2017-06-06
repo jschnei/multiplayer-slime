@@ -28,7 +28,7 @@ void handleWebSocket(WebSocket webSocket) {
 
 main() async {
   HttpServer server =
-      await HttpServer.bind(InternetAddress.LOOPBACK_IP_V4, 8018);
+      await HttpServer.bind(InternetAddress.ANY_IP_V4, 8018);
   print('listening on localhost, port ${server.port}');
 
   await for (HttpRequest request in server) {
