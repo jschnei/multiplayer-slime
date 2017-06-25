@@ -28,30 +28,36 @@ void handleWebSocket(WebSocket webSocket) {
 main() async {
   HttpServer server =
       await HttpServer.bind(InternetAddress.ANY_IP_V4, 8018);
-  print('listening on localhost, port ${server.port}');
+  print('listening on 0.0.0.0, port ${server.port}');
 
   await for (HttpRequest request in server) {
-    var webSocket = await WebSocketTransformer.upgrade(request);
-    if(playerId < NUM_PLAYERS){
-      sockets.add(webSocket);
+    try{
+      var webSocket = await WebSocketTransformer.upgrade(request);
+      if(playerId < NUM_PLAYERS){
+        sockets.add(webSocket);
 
-      var initMessage = {"type": "init", "playerId": playerId};
-      webSocket.add(JSON.encode(initMessage));
-      print("Player $playerId connected.");
+        var initMessage = {"type": "init", "playerId": playerId};
+        webSocket.add(JSON.encode(initMessage));
+        print("Player $playerId connected.");
 
-      handleWebSocket(webSocket);
+        handleWebSocket(webSocket);
 
-      playerId++;
-      if (playerId == NUM_PLAYERS) {
-        var startMessage = {"type": "start"};
-        print("Starting game...");
-        for(var socket in sockets){
-          socket.add(JSON.encode(startMessage));
+        playerId++;
+        if (playerId == NUM_PLAYERS) {
+          var startMessage = {"type": "start"};
+          print("Starting game...");
+          for(var socket in sockets){
+            socket.add(JSON.encode(startMessage));
+          }
         }
+      } else {
+        print("Error: game is full");
+        webSocket.addError("Error: game is full");
       }
-    } else {
-      print("Error: game is full");
-      webSocket.addError("Error: game is full");
+    } on WebSocketException{
+      print("Error: must connect via websocket protocol");
+    } catch(e){
+      print(e);
     }
   }
 }
