@@ -9,6 +9,7 @@ Priority:
 - create ability to reset rooms 
 - add scoring to game
 - write scripts to manage client and server processes
+- should be able to set buffer
 
 Longer Term:
 ------------
