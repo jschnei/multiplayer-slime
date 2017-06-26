@@ -4,12 +4,34 @@ import 'dart:convert';
 import 'consts.dart';
 
 enum Input { Left, Up, Right, Down }
-Map<int, Input> keyMapping = {
-  37: Input.Left,
-  38: Input.Up,
-  39: Input.Right,
-  40: Input.Down
+Map<Input, int> DEFAULT_P1_MAPPING = {
+  Input.Left: 37,   // LEFT ARROW
+  Input.Up: 38,     // UP ARROW
+  Input.Right: 39,  // RIGHT ARROW
+  Input.Down: 40    // DOWN ARROW
 };
+
+Map<Input, int> DEFAULT_P2_MAPPING = {
+  Input.Left: 65,   // A
+  Input.Up: 87,     // W
+  Input.Right: 68,  // D
+  Input.Down: 83    // S
+};
+
+class LocalPlayer {
+  int id;
+  Map<Input, int> keyMapping;
+
+  LocalPlayer(this.id, this.keyMapping);
+
+  PlayerInput getPlayerInput(Map<int, bool> keyboardState){
+    var output = new PlayerInput();
+    for(var input in Input.values){
+      output[input] = keyboardState[keyMapping[input]];
+    }
+    return output;
+  }
+}
 
 class InputBuffer extends MapBase<int, FrameInput> {
   final Map<int, FrameInput> _base;

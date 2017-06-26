@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:math' as Math;
 
 import 'app.dart';
+import 'input.dart';
 import 'consts.dart';
 
 class Game implements GameState {

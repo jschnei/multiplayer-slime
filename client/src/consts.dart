@@ -1,4 +1,4 @@
-const num FPS = 50;
+const num FPS = 60;
 
 const GAME_WIDTH = 730;
 const GAME_HEIGHT = GAME_WIDTH / 2;
@@ -11,4 +11,6 @@ const MAX_VELOCITY_X = 15;
 const MAX_VELOCITY_Y = 11;
 
 const NUM_PLAYERS = 2;
-const BUFFER = 3;
+const BUFFER = 1;
+
+const IS_LOCAL = true;
