@@ -11,6 +11,4 @@ const MAX_VELOCITY_X = 15;
 const MAX_VELOCITY_Y = 11;
 
 const NUM_PLAYERS = 2;
-const BUFFER = 1;
-
-const IS_LOCAL = true;
+const BUFFER = 4;

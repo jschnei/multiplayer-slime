@@ -21,11 +21,10 @@ num lastTime = new DateTime.now().millisecondsSinceEpoch;
 num currentTime = 0;
 int curFrame = 0;
 
-//int myId;
+bool isLocal;
 List<LocalPlayer> localPlayers = new List();
 
 InputBuffer inputBuffer = new InputBuffer();
-// PlayerInput playerInput = new PlayerInput();
 Map<int, bool> keyboardState = new Map<int, bool>();
 
 WebSocket ws;
@@ -43,7 +42,7 @@ void processInput(){
     PlayerInput playerInput = player.getPlayerInput(keyboardState);
     inputBuffer[curFrame + BUFFER][player.id] = playerInput;
 
-    if(!IS_LOCAL){
+    if(!isLocal){
       var message = {"type": "update",
                    "frame": curFrame,
                    "playerId": player.id,
@@ -74,7 +73,7 @@ void loop(num frames) {
   }
 }
 
-void main() {
+void startGame(){
   var gameDiv = querySelector('#game');
   canvas = new CanvasElement();
   canvas.width = 730;
@@ -88,7 +87,7 @@ void main() {
 
   gameState = new SlimeVolleyball.Game();
 
-  if(IS_LOCAL){
+  if(isLocal){
     // no need to connect to the websocket, just register local players
     localPlayers.add(new LocalPlayer(0, DEFAULT_P1_MAPPING));
     localPlayers.add(new LocalPlayer(1, DEFAULT_P2_MAPPING));
@@ -115,5 +114,19 @@ void main() {
       }
     });
   }
+}
+
+void main() {
+  
+  querySelector('#local').onClick.listen((e){
+    isLocal = true;
+    startGame();
+  });
+
+  querySelector('#network').onClick.listen((e){
+    isLocal = false;
+    startGame();
+  });
+  
 }
 
