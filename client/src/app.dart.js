@@ -9784,6 +9784,9 @@
           case "update":
             J.$indexSet$ax($.inputBuffer.$index(0, J.$add$ns(t1.$index(data, "frame"), $.buffer)), t1.$index(data, "playerId"), new Y.PlayerInput(P.LinkedHashMap_LinkedHashMap$fromIterables(C.List_9XG, C.JsonCodec_null_null.decode$1(t1.$index(data, "playerInput")), null, null)));
             break;
+          case "error":
+            P.print(t1.$index(data, "message"));
+            break;
         }
       }
     },

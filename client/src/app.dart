@@ -136,6 +136,10 @@ void startGame(){
         case "update":
           inputBuffer[data["frame"] + buffer][data["playerId"]] = new PlayerInput.fromJSON(data["playerInput"]);
           break;
+        
+        case "error":
+          print(data["message"]);
+          break;
       }
     });
   }

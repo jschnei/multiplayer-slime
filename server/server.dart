@@ -60,7 +60,8 @@ main() async {
         }
       } else {
         print("Error: game is full");
-        webSocket.addError("Error: game is full");
+        var errorMessage = {"type": "error", "message": "Error: game is full"};
+        webSocket.add(JSON.encode(errorMessage));
       }
     } on WebSocketException{
       print("Error: must connect via websocket protocol");
