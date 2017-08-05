@@ -11,4 +11,6 @@ const MAX_VELOCITY_X = 15;
 const MAX_VELOCITY_Y = 11;
 
 const NUM_PLAYERS = 2;
-const BUFFER = 4;
+const DEFAULT_BUFFER = 3;
+
+const SERVER_PORT = 8018;

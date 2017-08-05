@@ -22,9 +22,10 @@ num currentTime = 0;
 int curFrame = 0;
 
 bool isLocal;
+int buffer = DEFAULT_BUFFER;
 List<LocalPlayer> localPlayers = new List();
 
-InputBuffer inputBuffer = new InputBuffer();
+InputBuffer inputBuffer;
 Map<int, bool> keyboardState = new Map<int, bool>();
 
 WebSocket ws;
@@ -40,7 +41,7 @@ void keyUp(KeyboardEvent e){
 void processInput(){
   for(var player in localPlayers){
     PlayerInput playerInput = player.getPlayerInput(keyboardState);
-    inputBuffer[curFrame + BUFFER][player.id] = playerInput;
+    inputBuffer[curFrame + buffer][player.id] = playerInput;
 
     if(!isLocal){
       var message = {"type": "update",
@@ -74,6 +75,19 @@ void loop(num frames) {
 }
 
 void startGame(){
+  InputElement bufferInput = querySelector("#buffer");
+  int bufferInputValue = -1;
+  print(bufferInput.value);
+  try {
+    bufferInputValue = int.parse(bufferInput.value);
+  } catch(e) {
+    print(e);
+  }
+
+  print(bufferInputValue);
+
+  querySelector('#options').hidden = true;
+
   var gameDiv = querySelector('#game');
   canvas = new CanvasElement();
   canvas.width = 730;
@@ -93,7 +107,7 @@ void startGame(){
     localPlayers.add(new LocalPlayer(1, DEFAULT_P2_MAPPING));
     loop(0);
   }else{
-    ws = new WebSocket('ws://${Uri.base.host}:8018/');
+    ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/');
 
     ws.onMessage.listen((MessageEvent e){
       var data = JSON.decode(e.data);
@@ -102,14 +116,21 @@ void startGame(){
       switch(type){
         case "init":
           localPlayers.add(new LocalPlayer(data["playerId"], DEFAULT_P1_MAPPING));
+          if(bufferInputValue > 0){
+            var message = {"type": "setBuffer",
+                           "buffer": bufferInputValue};
+            ws.send(JSON.encode(message));
+          }
           break;
 
         case "start":
+          buffer = data["buffer"];
+          inputBuffer = new InputBuffer(buffer);
           loop(0);
           break;
 
         case "update":
-          inputBuffer[data["frame"] + BUFFER][data["playerId"]] = new PlayerInput.fromJSON(data["playerInput"]);
+          inputBuffer[data["frame"] + buffer][data["playerId"]] = new PlayerInput.fromJSON(data["playerInput"]);
           break;
       }
     });

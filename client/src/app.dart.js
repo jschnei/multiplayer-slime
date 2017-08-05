@@ -2337,6 +2337,7 @@
     },
     Primitives_parseInt: function(source, radix, handleError) {
       var match, decimalMatch, maxCharCode, digitsPart, t1, i;
+      H.checkString(source);
       match = /^\s*[+-]?((0x[a-f0-9]+)|(\d+)|([a-z0-9]+))\s*$/i.exec(source);
       if (match == null)
         return H.Primitives__parseIntError(source, handleError);
@@ -2531,6 +2532,11 @@
     },
     checkInt: function(value) {
       if (typeof value !== "number" || Math.floor(value) !== value)
+        throw H.wrapException(H.argumentErrorValue(value));
+      return value;
+    },
+    checkString: function(value) {
+      if (typeof value !== "string")
         throw H.wrapException(H.argumentErrorValue(value));
       return value;
     },
@@ -5303,7 +5309,7 @@
       "^": "Object;next@"
     },
     _DelayedData: {
-      "^": "_DelayedEvent;value,next,$ti",
+      "^": "_DelayedEvent;value>,next,$ti",
       perform$1: function(dispatch) {
         dispatch._sendData$1(this.value);
       }
@@ -7727,8 +7733,9 @@
     FormatException: {
       "^": "Object;message,source,offset",
       toString$0: function(_) {
-        var report, offset, source, t1, lineNum, lineStart, lastWasCR, i, char, lineEnd, end, start, prefix, postfix, slice;
-        report = "" !== this.message ? "FormatException: " + this.message : "FormatException";
+        var t1, report, offset, source, lineNum, lineStart, lastWasCR, i, char, lineEnd, end, start, prefix, postfix, slice;
+        t1 = this.message;
+        report = t1 != null && "" !== t1 ? "FormatException: " + H.S(t1) : "FormatException";
         offset = this.offset;
         source = this.source;
         if (typeof source !== "string")
@@ -8901,7 +8908,7 @@
     },
     HtmlElement: {
       "^": "Element;",
-      "%": "HTMLAppletElement|HTMLBRElement|HTMLBaseElement|HTMLButtonElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLEmbedElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLIFrameElement|HTMLImageElement|HTMLKeygenElement|HTMLLIElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLMeterElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLOptionElement|HTMLOutputElement|HTMLParagraphElement|HTMLParamElement|HTMLPictureElement|HTMLPreElement|HTMLProgressElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTextAreaElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement|PluginPlaceholderElement;HTMLElement"
+      "%": "HTMLAppletElement|HTMLBRElement|HTMLBaseElement|HTMLContentElement|HTMLDListElement|HTMLDataListElement|HTMLDetailsElement|HTMLDialogElement|HTMLDirectoryElement|HTMLDivElement|HTMLEmbedElement|HTMLFieldSetElement|HTMLFontElement|HTMLFrameElement|HTMLHRElement|HTMLHeadElement|HTMLHeadingElement|HTMLHtmlElement|HTMLIFrameElement|HTMLImageElement|HTMLKeygenElement|HTMLLabelElement|HTMLLegendElement|HTMLLinkElement|HTMLMapElement|HTMLMarqueeElement|HTMLMenuElement|HTMLMenuItemElement|HTMLMetaElement|HTMLModElement|HTMLOListElement|HTMLOptGroupElement|HTMLParagraphElement|HTMLPictureElement|HTMLPreElement|HTMLQuoteElement|HTMLScriptElement|HTMLShadowElement|HTMLSourceElement|HTMLSpanElement|HTMLStyleElement|HTMLTableCaptionElement|HTMLTableCellElement|HTMLTableColElement|HTMLTableDataCellElement|HTMLTableElement|HTMLTableHeaderCellElement|HTMLTableRowElement|HTMLTableSectionElement|HTMLTemplateElement|HTMLTitleElement|HTMLTrackElement|HTMLUListElement|HTMLUnknownElement|PluginPlaceholderElement;HTMLElement"
     },
     AnchorElement: {
       "^": "HtmlElement;",
@@ -8923,6 +8930,10 @@
       "^": "HtmlElement;",
       $isInterceptor: 1,
       "%": "HTMLBodyElement"
+    },
+    ButtonElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLButtonElement"
     },
     CanvasElement: {
       "^": "HtmlElement;",
@@ -8949,6 +8960,10 @@
     CompositionEvent: {
       "^": "UIEvent;data=",
       "%": "CompositionEvent"
+    },
+    DeviceLightEvent: {
+      "^": "Event;value=",
+      "%": "DeviceLightEvent"
     },
     DocumentFragment: {
       "^": "Node;",
@@ -9019,7 +9034,7 @@
     },
     Event: {
       "^": "Interceptor;",
-      "%": "AnimationEvent|AnimationPlayerEvent|ApplicationCacheErrorEvent|AudioProcessingEvent|AutocompleteErrorEvent|BeforeInstallPromptEvent|BeforeUnloadEvent|ClipboardEvent|CloseEvent|CrossOriginConnectEvent|CustomEvent|DefaultSessionStartEvent|DeviceLightEvent|DeviceMotionEvent|DeviceOrientationEvent|FontFaceSetLoadEvent|GamepadEvent|GeofencingEvent|HashChangeEvent|IDBVersionChangeEvent|MIDIConnectionEvent|MediaEncryptedEvent|MediaKeyEvent|MediaKeyMessageEvent|MediaQueryListEvent|MediaStreamEvent|MediaStreamTrackEvent|OfflineAudioCompletionEvent|PageTransitionEvent|PopStateEvent|ProgressEvent|PromiseRejectionEvent|RTCDTMFToneChangeEvent|RTCDataChannelEvent|RTCIceCandidateEvent|RTCPeerConnectionIceEvent|RelatedEvent|ResourceProgressEvent|SecurityPolicyViolationEvent|SpeechRecognitionEvent|SpeechSynthesisEvent|StorageEvent|TrackEvent|TransitionEvent|WebGLContextEvent|WebKitTransitionEvent|XMLHttpRequestProgressEvent;Event|InputEvent"
+      "%": "AnimationEvent|AnimationPlayerEvent|ApplicationCacheErrorEvent|AudioProcessingEvent|AutocompleteErrorEvent|BeforeInstallPromptEvent|BeforeUnloadEvent|ClipboardEvent|CloseEvent|CrossOriginConnectEvent|CustomEvent|DefaultSessionStartEvent|DeviceMotionEvent|DeviceOrientationEvent|FontFaceSetLoadEvent|GamepadEvent|GeofencingEvent|HashChangeEvent|IDBVersionChangeEvent|MIDIConnectionEvent|MediaEncryptedEvent|MediaKeyEvent|MediaKeyMessageEvent|MediaQueryListEvent|MediaStreamEvent|MediaStreamTrackEvent|OfflineAudioCompletionEvent|PageTransitionEvent|PopStateEvent|ProgressEvent|PromiseRejectionEvent|RTCDTMFToneChangeEvent|RTCDataChannelEvent|RTCIceCandidateEvent|RTCPeerConnectionIceEvent|RelatedEvent|ResourceProgressEvent|SecurityPolicyViolationEvent|SpeechRecognitionEvent|SpeechSynthesisEvent|StorageEvent|TrackEvent|TransitionEvent|WebGLContextEvent|WebKitTransitionEvent|XMLHttpRequestProgressEvent;Event|InputEvent"
     },
     EventTarget: {
       "^": "Interceptor;",
@@ -9040,7 +9055,7 @@
       "%": "HTMLFormElement"
     },
     InputElement: {
-      "^": "HtmlElement;",
+      "^": "HtmlElement;value=",
       $isInterceptor: 1,
       "%": "HTMLInputElement"
     },
@@ -9052,6 +9067,10 @@
       $isKeyboardEvent: 1,
       $isObject: 1,
       "%": "KeyboardEvent"
+    },
+    LIElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLLIElement"
     },
     MediaElement: {
       "^": "HtmlElement;error=",
@@ -9069,6 +9088,10 @@
       $isMessageEvent: 1,
       $isObject: 1,
       "%": "MessageEvent"
+    },
+    MeterElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLMeterElement"
     },
     MidiMessageEvent: {
       "^": "Event;data=",
@@ -9099,18 +9122,34 @@
         var value = receiver.nodeValue;
         return value == null ? this.super$Interceptor$toString(receiver) : value;
       },
-      "%": "Attr|Document|HTMLDocument|XMLDocument;Node"
+      "%": "Document|HTMLDocument|XMLDocument;Node"
     },
     ObjectElement: {
       "^": "HtmlElement;data=",
       "%": "HTMLObjectElement"
+    },
+    OptionElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLOptionElement"
+    },
+    OutputElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLOutputElement"
+    },
+    ParamElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLParamElement"
+    },
+    ProgressElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLProgressElement"
     },
     PushEvent: {
       "^": "ExtendableEvent;data=",
       "%": "PushEvent"
     },
     SelectElement: {
-      "^": "HtmlElement;length=",
+      "^": "HtmlElement;length=,value=",
       "%": "HTMLSelectElement"
     },
     ServiceWorkerMessageEvent: {
@@ -9127,6 +9166,10 @@
     SpeechRecognitionError: {
       "^": "Event;error=",
       "%": "SpeechRecognitionError"
+    },
+    TextAreaElement: {
+      "^": "HtmlElement;value=",
+      "%": "HTMLTextAreaElement"
     },
     TextEvent: {
       "^": "UIEvent;data=",
@@ -9171,6 +9214,10 @@
       },
       $isInterceptor: 1,
       "%": "DOMWindow|Window"
+    },
+    _Attr: {
+      "^": "Node;value=",
+      "%": "Attr"
     },
     _ClientRect: {
       "^": "Interceptor;height=,left=,top=,width=",
@@ -9652,18 +9699,22 @@
       for (t1 = $.$get$localPlayers(), t2 = t1.length, t3 = [Y.PlayerInput], _i = 0; _i < t1.length; t1.length === t2 || (0, H.throwConcurrentModificationError)(t1), ++_i) {
         player = t1[_i];
         playerInput = player.getPlayerInput$1($.$get$keyboardState());
-        t4 = $.$get$inputBuffer();
-        t5 = $.curFrame + 4;
+        t4 = $.inputBuffer;
+        t5 = $.curFrame;
+        t6 = $.buffer;
+        if (typeof t6 !== "number")
+          return H.iae(t6);
+        t6 = t5 + t6;
         t4 = t4._base;
-        if (!t4.containsKey$1(t5)) {
-          t6 = new Array(2);
-          t6.fixed$length = Array;
-          t4.$indexSet(0, t5, new Y.FrameInput(H.setRuntimeTypeInfo(t6, t3)));
+        if (!t4.containsKey$1(t6)) {
+          t5 = new Array(2);
+          t5.fixed$length = Array;
+          t4.$indexSet(0, t6, new Y.FrameInput(H.setRuntimeTypeInfo(t5, t3)));
         }
-        t6 = player.id;
-        J.$indexSet$ax(t4.$index(0, t5), t6, playerInput);
+        t5 = player.id;
+        J.$indexSet$ax(t4.$index(0, t6), t5, playerInput);
         if ($.isLocal !== true) {
-          message = P.LinkedHashMap__makeLiteral(["type", "update", "frame", $.curFrame, "playerId", t6, "playerInput", playerInput.toJSON$0()]);
+          message = P.LinkedHashMap__makeLiteral(["type", "update", "frame", $.curFrame, "playerId", t5, "playerInput", playerInput.toJSON$0()]);
           $.ws.send(C.JsonCodec_null_null.encode$1(message));
         }
       }
@@ -9681,45 +9732,65 @@
       t3 = $.interval;
       if (typeof t3 !== "number")
         return H.iae(t3);
-      if (t1 - t2 > t3)
-        if ($.$get$inputBuffer().$index(0, $.curFrame).hasInputs$0()) {
-          $.gameState.update$1($.$get$inputBuffer().$index(0, $.curFrame));
+      if (t1 - t2 > t3) {
+        t1 = $.inputBuffer.$index(0, $.curFrame).hasInputs$0();
+        t2 = $.curFrame;
+        if (t1) {
+          $.gameState.update$1($.inputBuffer.$index(0, t2));
           $.gameState.render$2($.ctx, $.canvas);
           S.processInput();
           $.lastTime = $.currentTime;
           $.curFrame = $.curFrame + 1;
         } else
-          P.print("Waiting for input for frame " + $.curFrame);
+          P.print("Waiting for input for frame " + t2);
+      }
     }, "call$1", "app__loop$closure", 2, 0, 19],
     startGame: function() {
-      var t1, gameDiv, e;
-      t1 = document;
-      gameDiv = t1.querySelector("#game");
-      e = t1.createElement("canvas");
+      var t1, bufferInput, e, t2, bufferInputValue, t3, exception, t4, gameDiv;
+      t1 = {};
+      t2 = document;
+      bufferInput = t2.querySelector("#buffer");
+      t1.bufferInputValue = -1;
+      P.print(J.get$value$x(bufferInput));
+      try {
+        bufferInputValue = H.Primitives_parseInt(J.get$value$x(bufferInput), null, null);
+        t1.bufferInputValue = bufferInputValue;
+        t3 = bufferInputValue;
+        t3 = t3;
+        t3 = t3;
+      } catch (exception) {
+        t4 = H.unwrapException(exception);
+        e = t4;
+        P.print(e);
+      }
+      P.print(t3);
+      t2.querySelector("#options").hidden = true;
+      gameDiv = t2.querySelector("#game");
+      e = t2.createElement("canvas");
       $.canvas = e;
       e.width = 730;
       e.height = 365;
       gameDiv.appendChild(e);
-      t1 = W.KeyboardEvent;
-      W._EventStreamSubscription$(window, "keydown", S.app__keyDown$closure(), false, t1);
-      W._EventStreamSubscription$(window, "keyup", S.app__keyUp$closure(), false, t1);
-      t1 = $.canvas;
-      $.ctx = (t1 && C.CanvasElement_methods).getContext$1(t1, "2d");
-      t1 = new R.Game(null, null);
-      $.GameObject_game = t1;
-      t1.slimes = [new R.Slime(50, "#f00", 0, 495, null, null, null, null), new R.Slime(50, "#0f0", 505, 1000, null, null, null, null)];
-      t1.ball = new R.Ball(15, "#ff0", null, null, null, null);
-      t1.initRound$1(true);
-      $.gameState = t1;
+      t2 = W.KeyboardEvent;
+      W._EventStreamSubscription$(window, "keydown", S.app__keyDown$closure(), false, t2);
+      W._EventStreamSubscription$(window, "keyup", S.app__keyUp$closure(), false, t2);
+      t2 = $.canvas;
+      $.ctx = (t2 && C.CanvasElement_methods).getContext$1(t2, "2d");
+      t2 = new R.Game(null, null);
+      $.GameObject_game = t2;
+      t2.slimes = [new R.Slime(50, "#f00", 0, 495, null, null, null, null), new R.Slime(50, "#0f0", 505, 1000, null, null, null, null)];
+      t2.ball = new R.Ball(15, "#ff0", null, null, null, null);
+      t2.initRound$1(true);
+      $.gameState = t2;
       if ($.isLocal === true) {
         $.$get$localPlayers().push(new Y.LocalPlayer(0, $.$get$DEFAULT_P1_MAPPING()));
         $.$get$localPlayers().push(new Y.LocalPlayer(1, $.$get$DEFAULT_P2_MAPPING()));
         S.loop(0);
       } else {
-        t1 = P.Uri_base();
-        t1 = W.WebSocket_WebSocket("ws://" + H.S(t1.get$host(t1)) + ":8018/", null);
-        $.ws = t1;
-        W._EventStreamSubscription$(t1, "message", new S.startGame_closure(), false, W.MessageEvent);
+        t2 = P.Uri_base();
+        t2 = W.WebSocket_WebSocket("ws://" + H.S(t2.get$host(t2)) + ":8018/", null);
+        $.ws = t2;
+        W._EventStreamSubscription$(t2, "message", new S.startGame_closure(t1), false, W.MessageEvent);
       }
     },
     main: [function() {
@@ -9731,20 +9802,28 @@
       W._EventStreamSubscription$(t1._html$_target, t1._eventType, new S.main_closure0(), false, H.getTypeArgumentByIndex(t1, 0));
     }, "call$0", "app__main$closure", 0, 0, 2],
     startGame_closure: {
-      "^": "Closure:18;",
+      "^": "Closure:18;_box_0",
       call$1: function(e) {
-        var data, t1;
+        var data, t1, message;
         data = C.JsonCodec_null_null.decode$1(J.get$data$x(e));
         t1 = J.getInterceptor$asx(data);
         switch (t1.$index(data, "type")) {
           case "init":
             $.$get$localPlayers().push(new Y.LocalPlayer(t1.$index(data, "playerId"), $.$get$DEFAULT_P1_MAPPING()));
+            t1 = this._box_0;
+            if (J.$gt$n(t1.bufferInputValue, 0)) {
+              message = P.LinkedHashMap__makeLiteral(["type", "setBuffer", "buffer", t1.bufferInputValue]);
+              $.ws.send(C.JsonCodec_null_null.encode$1(message));
+            }
             break;
           case "start":
+            t1 = t1.$index(data, "buffer");
+            $.buffer = t1;
+            $.inputBuffer = Y.InputBuffer$(t1);
             S.loop(0);
             break;
           case "update":
-            J.$indexSet$ax($.$get$inputBuffer().$index(0, J.$add$ns(t1.$index(data, "frame"), 4)), t1.$index(data, "playerId"), new Y.PlayerInput(P.LinkedHashMap_LinkedHashMap$fromIterables(C.List_9XG, C.JsonCodec_null_null.decode$1(t1.$index(data, "playerInput")), null, null)));
+            J.$indexSet$ax($.inputBuffer.$index(0, J.$add$ns(t1.$index(data, "frame"), $.buffer)), t1.$index(data, "playerId"), new Y.PlayerInput(P.LinkedHashMap_LinkedHashMap$fromIterables(C.List_9XG, C.JsonCodec_null_null.decode$1(t1.$index(data, "playerInput")), null, null)));
             break;
         }
       }
@@ -9801,18 +9880,22 @@
       get$keys: function() {
         return this._base.get$keys();
       },
-      InputBuffer$0: function() {
+      InputBuffer$1: function(buffer) {
         var t1, frame;
-        for (t1 = this._base, frame = 0; frame < 4; ++frame)
+        if (typeof buffer !== "number")
+          return H.iae(buffer);
+        t1 = this._base;
+        frame = 0;
+        for (; frame < buffer; ++frame)
           t1.$indexSet(0, frame, Y.FrameInput$emptyFrame());
       },
       $asMap: function() {
         return [P.int, Y.FrameInput];
       },
       static: {
-        InputBuffer$: function() {
+        InputBuffer$: function(buffer) {
           var t1 = new Y.InputBuffer(new H.JsLinkedHashMap(0, null, null, null, null, null, 0, [P.int, Y.FrameInput]));
-          t1.InputBuffer$0();
+          t1.InputBuffer$1(buffer);
           return t1;
         }
       }
@@ -10308,6 +10391,9 @@
   J.get$onClick$x = function(receiver) {
     return J.getInterceptor$x(receiver).get$onClick(receiver);
   };
+  J.get$value$x = function(receiver) {
+    return J.getInterceptor$x(receiver).get$value(receiver);
+  };
   J.$add$ns = function(receiver, a0) {
     if (typeof receiver == "number" && typeof a0 == "number")
       return receiver + a0;
@@ -10564,6 +10650,8 @@
   $.currentTime = 0;
   $.curFrame = 0;
   $.isLocal = null;
+  $.buffer = 3;
+  $.inputBuffer = null;
   $.ws = null;
   $.GameObject_game = null;
   $ = null;
@@ -10674,9 +10762,7 @@
     return P.DateTime$now().get$millisecondsSinceEpoch();
   }, "lastTime", "localPlayers", "$get$localPlayers", function() {
     return [];
-  }, "localPlayers", "inputBuffer", "$get$inputBuffer", function() {
-    return Y.InputBuffer$();
-  }, "inputBuffer", "keyboardState", "$get$keyboardState", function() {
+  }, "localPlayers", "keyboardState", "$get$keyboardState", function() {
     return H.JsLinkedHashMap_JsLinkedHashMap$es6(P.int, P.bool);
   }, "keyboardState", "DEFAULT_P1_MAPPING", "$get$DEFAULT_P1_MAPPING", function() {
     return P.LinkedHashMap__makeLiteral([C.Input_0, 37, C.Input_1, 38, C.Input_2, 39, C.Input_3, 40]);

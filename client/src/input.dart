@@ -36,8 +36,8 @@ class LocalPlayer {
 class InputBuffer extends MapBase<int, FrameInput> {
   final Map<int, FrameInput> _base;
 
-  InputBuffer() : _base = new Map<int, FrameInput>() {
-    for(var frame=0;frame<BUFFER;frame++){
+  InputBuffer(buffer) : _base = new Map<int, FrameInput>() {
+    for(var frame=0;frame<buffer;frame++){
       _base[frame] = new FrameInput.emptyFrame();
     }
   }

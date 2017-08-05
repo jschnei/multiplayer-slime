@@ -2,25 +2,35 @@ import 'dart:io';
 import 'dart:convert';
 
 const NUM_PLAYERS = 2;
+const DEFAULT_BUFFER = 3;
 
 List<WebSocket> sockets = new List<WebSocket>();
 int playerId = 0;
+int buffer = 3;
+
+void broadcastMessage(dynamic message){
+  for (var socket in sockets){
+    socket.add(JSON.encode(message));
+  }
+}
 
 void handleWebSocket(WebSocket webSocket) {
   webSocket.map(JSON.decode).listen((json) {
     String type = json["type"];
     switch (type) {
       case "update":
-        var updateMessage = {
+        var message = {
           "type": "update",
           "frame": json["frame"],
           "playerId": json["playerId"],
           "playerInput": json["playerInput"]
         };
-        for (var socket in sockets) {
-          socket.add(JSON.encode(updateMessage));
-        }
-        webSocket.add(JSON.encode(updateMessage));
+        broadcastMessage(message);
+        break;
+      case "setBuffer":
+        buffer = json["buffer"];
+        print("set buffer to $buffer");
+        break;
     }
   });
 }
@@ -44,11 +54,9 @@ main() async {
 
         playerId++;
         if (playerId == NUM_PLAYERS) {
-          var startMessage = {"type": "start"};
+          var startMessage = {"type": "start", "buffer": buffer};
           print("Starting game...");
-          for(var socket in sockets){
-            socket.add(JSON.encode(startMessage));
-          }
+          broadcastMessage(startMessage);
         }
       } else {
         print("Error: game is full");
