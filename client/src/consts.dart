@@ -12,5 +12,6 @@ const MAX_VELOCITY_Y = 11;
 
 const NUM_PLAYERS = 2;
 const DEFAULT_BUFFER = 3;
+const LOCAL_BUFFER = 2; // only change this if you want to simulate latency locally
 
 const SERVER_PORT = 8018;

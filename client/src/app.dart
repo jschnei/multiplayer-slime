@@ -105,6 +105,10 @@ void startGame(){
     // no need to connect to the websocket, just register local players
     localPlayers.add(new LocalPlayer(0, DEFAULT_P1_MAPPING));
     localPlayers.add(new LocalPlayer(1, DEFAULT_P2_MAPPING));
+
+    buffer = LOCAL_BUFFER;
+    inputBuffer = new InputBuffer(buffer);
+
     loop(0);
   }else{
     ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/');

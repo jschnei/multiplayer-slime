@@ -179,7 +179,6 @@ class Ball extends GameObject {
     }
 
     // detect net collisions
-        // hits the post
     if (x > 480 && x < 520 && y < 70) {
       // bounces off top of net
       if (velocityY < 0 && y > 65) {
