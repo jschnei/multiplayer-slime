@@ -990,6 +990,24 @@
       substring$1: function($receiver, startIndex) {
         return this.substring$2($receiver, startIndex, null);
       },
+      trim$0: function(receiver) {
+        var result, endIndex, startIndex, t1, endIndex0;
+        result = receiver.trim();
+        endIndex = result.length;
+        if (endIndex === 0)
+          return result;
+        if (this._codeUnitAt$1(result, 0) === 133) {
+          startIndex = J.JSString__skipLeadingWhitespace(result, 1);
+          if (startIndex === endIndex)
+            return "";
+        } else
+          startIndex = 0;
+        t1 = endIndex - 1;
+        endIndex0 = this.codeUnitAt$1(result, t1) === 133 ? J.JSString__skipTrailingWhitespace(result, t1) : endIndex;
+        if (startIndex === 0 && endIndex0 === endIndex)
+          return result;
+        return result.substring(startIndex, endIndex0);
+      },
       $mul: function(receiver, times) {
         var s, result;
         if (0 >= times)
@@ -1047,7 +1065,68 @@
       },
       $isJSIndexable: 1,
       $asJSIndexable: Isolate.functionThatReturnsNull,
-      $isString: 1
+      $isString: 1,
+      static: {
+        JSString__isWhitespace: function(codeUnit) {
+          if (codeUnit < 256)
+            switch (codeUnit) {
+              case 9:
+              case 10:
+              case 11:
+              case 12:
+              case 13:
+              case 32:
+              case 133:
+              case 160:
+                return true;
+              default:
+                return false;
+            }
+          switch (codeUnit) {
+            case 5760:
+            case 8192:
+            case 8193:
+            case 8194:
+            case 8195:
+            case 8196:
+            case 8197:
+            case 8198:
+            case 8199:
+            case 8200:
+            case 8201:
+            case 8202:
+            case 8232:
+            case 8233:
+            case 8239:
+            case 8287:
+            case 12288:
+            case 65279:
+              return true;
+            default:
+              return false;
+          }
+        },
+        JSString__skipLeadingWhitespace: function(string, index) {
+          var t1, codeUnit;
+          for (t1 = string.length; index < t1;) {
+            codeUnit = C.JSString_methods._codeUnitAt$1(string, index);
+            if (codeUnit !== 32 && codeUnit !== 13 && !J.JSString__isWhitespace(codeUnit))
+              break;
+            ++index;
+          }
+          return index;
+        },
+        JSString__skipTrailingWhitespace: function(string, index) {
+          var index0, codeUnit;
+          for (; index > 0; index = index0) {
+            index0 = index - 1;
+            codeUnit = C.JSString_methods.codeUnitAt$1(string, index0);
+            if (codeUnit !== 32 && codeUnit !== 13 && !J.JSString__isWhitespace(codeUnit))
+              break;
+          }
+          return index;
+        }
+      }
     }
   }], ["dart._internal", "dart:_internal",, H, {
     "^": "",
@@ -3903,13 +3982,13 @@
       }
     },
     initHooks_closure0: {
-      "^": "Closure:8;getUnknownTag",
+      "^": "Closure:9;getUnknownTag",
       call$2: function(o, tag) {
         return this.getUnknownTag(o, tag);
       }
     },
     initHooks_closure1: {
-      "^": "Closure:9;prototypeForTag",
+      "^": "Closure:10;prototypeForTag",
       call$1: function(tag) {
         return this.prototypeForTag(tag);
       }
@@ -4460,7 +4539,7 @@
       }
     },
     _AsyncRun__initializeScheduleImmediate_closure: {
-      "^": "Closure:10;_box_0,div,span",
+      "^": "Closure:11;_box_0,div,span",
       call$1: function(callback) {
         var t1, t2;
         ++init.globalState.topEventLoop._activeJsAsyncCount;
@@ -4664,7 +4743,7 @@
         P._Future__propagateToListeners(this, listeners);
       }, function(error) {
         return this._completeError$2(error, null);
-      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 11, 0],
+      }, "_completeError$1", "call$2", "call$1", "get$_completeError", 2, 2, 12, 0],
       _asyncComplete$1: function(value) {
         var t1;
         if (H.checkSubtype(value, "$isFuture", this.$ti, "$asFuture")) {
@@ -4850,7 +4929,7 @@
       }
     },
     _Future__chainForeignFuture_closure0: {
-      "^": "Closure:12;target",
+      "^": "Closure:13;target",
       call$2: function(error, stackTrace) {
         this.target._completeError$2(error, stackTrace);
       },
@@ -5432,7 +5511,7 @@
       }],
       _handleError$2: [function(error, stackTrace) {
         this._stream._handleError$3(error, stackTrace, this);
-      }, "call$2", "get$_handleError", 4, 0, 13],
+      }, "call$2", "get$_handleError", 4, 0, 14],
       _handleDone$0: [function() {
         this._async$_close$0();
       }, "call$0", "get$_handleDone", 0, 0, 2],
@@ -7920,13 +7999,13 @@
       }
     },
     Uri__parseIPv4Address_error: {
-      "^": "Closure:14;host",
+      "^": "Closure:15;host",
       call$2: function(msg, position) {
         throw H.wrapException(new P.FormatException("Illegal IPv4 address, " + msg, this.host, position));
       }
     },
     Uri_parseIPv6Address_error: {
-      "^": "Closure:15;host",
+      "^": "Closure:16;host",
       call$2: function(msg, position) {
         throw H.wrapException(new P.FormatException("Illegal IPv6 address, " + msg, this.host, position));
       },
@@ -7935,7 +8014,7 @@
       }
     },
     Uri_parseIPv6Address_parseHex: {
-      "^": "Closure:16;host,error",
+      "^": "Closure:17;host,error",
       call$2: function(start, end) {
         var value, t1;
         if (end - start > 4)
@@ -8727,7 +8806,7 @@
       }
     },
     _createTables_build: {
-      "^": "Closure:17;tables",
+      "^": "Closure:18;tables",
       call$2: function(state, defaultTransition) {
         var t1 = this.tables;
         if (state >= t1.length)
@@ -9648,10 +9727,10 @@
     "^": "",
     keyDown: [function(e) {
       $.$get$keyboardState().$indexSet(0, J.get$keyCode$x(e), true);
-    }, "call$1", "app__keyDown$closure", 2, 0, 7],
+    }, "call$1", "app__keyDown$closure", 2, 0, 8],
     keyUp: [function(e) {
       $.$get$keyboardState().$indexSet(0, J.get$keyCode$x(e), false);
-    }, "call$1", "app__keyUp$closure", 2, 0, 7],
+    }, "call$1", "app__keyUp$closure", 2, 0, 8],
     processInput: function() {
       var t1, t2, t3, _i, player, playerInput, t4, t5, t6, message;
       for (t1 = $.$get$localPlayers(), t2 = t1.length, t3 = [Y.PlayerInput], _i = 0; _i < t1.length; t1.length === t2 || (0, H.throwConcurrentModificationError)(t1), ++_i) {
@@ -9672,7 +9751,7 @@
         t5 = player.id;
         J.$indexSet$ax(t4.$index(0, t6), t5, playerInput);
         if ($.isLocal !== true) {
-          message = P.LinkedHashMap__makeLiteral(["type", "update", "frame", $.curFrame, "playerId", t5, "playerInput", playerInput.toJSON$0()]);
+          message = P.LinkedHashMap__makeLiteral(["type", "update", "frame", $.curFrame, "playerId", t5, "playerInput", playerInput.toJSON$0(), "room", $.room]);
           $.ws.send(C.JsonCodec_null_null.encode$1(message));
         }
       }
@@ -9704,41 +9783,27 @@
       }
     }, "call$1", "app__loop$closure", 2, 0, 19],
     startGame: function() {
-      var t1, bufferInput, e, t2, bufferInputValue, t3, exception, gameDiv;
+      var t1, bufferInput, e, t2, gameDiv, e0, t3, exception;
       t1 = {};
       t2 = document;
-      bufferInput = t2.querySelector("#buffer");
-      t1.bufferInputValue = -1;
-      P.print(J.get$value$x(bufferInput));
-      try {
-        bufferInputValue = H.Primitives_parseInt(J.get$value$x(bufferInput), null, null);
-        t1.bufferInputValue = bufferInputValue;
-        t3 = bufferInputValue;
-        t3 = t3;
-        t3 = t3;
-      } catch (exception) {
-        e = H.unwrapException(exception);
-        P.print(e);
-      }
-      P.print(t3);
       t2.querySelector("#options").hidden = true;
       gameDiv = t2.querySelector("#game");
-      e = t2.createElement("canvas");
-      $.canvas = e;
-      e.width = 730;
-      e.height = 365;
-      gameDiv.appendChild(e);
-      t2 = W.KeyboardEvent;
-      W._EventStreamSubscription$(window, "keydown", S.app__keyDown$closure(), false, t2);
-      W._EventStreamSubscription$(window, "keyup", S.app__keyUp$closure(), false, t2);
-      t2 = $.canvas;
-      $.ctx = (t2 && C.CanvasElement_methods).getContext$1(t2, "2d");
-      t2 = new R.Game(null, null);
-      $.GameObject_game = t2;
-      t2.slimes = [new R.Slime(50, "#f00", 0, 495, null, null, null, null), new R.Slime(50, "#0f0", 505, 1000, null, null, null, null)];
-      t2.ball = new R.Ball(15, "#ff0", null, null, null, null);
-      t2.initRound$1(true);
-      $.gameState = t2;
+      e0 = t2.createElement("canvas");
+      $.canvas = e0;
+      e0.width = 730;
+      e0.height = 365;
+      gameDiv.appendChild(e0);
+      t3 = W.KeyboardEvent;
+      W._EventStreamSubscription$(window, "keydown", S.app__keyDown$closure(), false, t3);
+      W._EventStreamSubscription$(window, "keyup", S.app__keyUp$closure(), false, t3);
+      t3 = $.canvas;
+      $.ctx = (t3 && C.CanvasElement_methods).getContext$1(t3, "2d");
+      t3 = new R.Game(null, null);
+      $.GameObject_game = t3;
+      t3.slimes = [new R.Slime(50, "#f00", 0, 495, null, null, null, null), new R.Slime(50, "#0f0", 505, 1000, null, null, null, null)];
+      t3.ball = new R.Ball(15, "#ff0", null, null, null, null);
+      t3.initRound$1(true);
+      $.gameState = t3;
       if ($.isLocal === true) {
         $.$get$localPlayers().push(new Y.LocalPlayer(0, $.$get$DEFAULT_P1_MAPPING()));
         $.$get$localPlayers().push(new Y.LocalPlayer(1, $.$get$DEFAULT_P2_MAPPING()));
@@ -9746,10 +9811,22 @@
         $.inputBuffer = Y.InputBuffer$(2);
         S.loop(0);
       } else {
+        bufferInput = t2.querySelector("#buffer");
+        t1.bufferInputValue = -1;
+        try {
+          t1.bufferInputValue = H.Primitives_parseInt(J.get$value$x(bufferInput), null, null);
+        } catch (exception) {
+          e = H.unwrapException(exception);
+          P.print(e);
+        }
+        $.room = J.trim$0$s(J.get$value$x(t2.querySelector("#room"))).toLowerCase();
         t2 = P.Uri_base();
         t2 = W.WebSocket_WebSocket("ws://" + H.S(t2.get$host(t2)) + ":8018/", null);
         $.ws = t2;
-        W._EventStreamSubscription$(t2, "message", new S.startGame_closure(t1), false, W.MessageEvent);
+        W._EventStreamSubscription$(t2, "open", new S.startGame_closure(), false, W.Event);
+        t2 = $.ws;
+        t2.toString;
+        W._EventStreamSubscription$(t2, "message", new S.startGame_closure0(t1), false, W.MessageEvent);
       }
     },
     main: [function() {
@@ -9761,7 +9838,14 @@
       W._EventStreamSubscription$(t1._html$_target, t1._eventType, new S.main_closure0(), false, H.getTypeArgumentByIndex(t1, 0));
     }, "call$0", "app__main$closure", 0, 0, 2],
     startGame_closure: {
-      "^": "Closure:18;_box_0",
+      "^": "Closure:7;",
+      call$1: function(e) {
+        var joinMessage = P.LinkedHashMap__makeLiteral(["type", "joinRoom", "room", $.room]);
+        $.ws.send(C.JsonCodec_null_null.encode$1(joinMessage));
+      }
+    },
+    startGame_closure0: {
+      "^": "Closure:7;_box_0",
       call$1: function(e) {
         var data, t1, message;
         data = C.JsonCodec_null_null.decode$1(J.get$data$x(e));
@@ -10408,6 +10492,9 @@
   J.sublist$2$ax = function(receiver, a0, a1) {
     return J.getInterceptor$ax(receiver).sublist$2(receiver, a0, a1);
   };
+  J.trim$0$s = function(receiver) {
+    return J.getInterceptor$s(receiver).trim$0(receiver);
+  };
   J.get$hashCode$ = function(receiver) {
     return J.getInterceptor(receiver).get$hashCode(receiver);
   };
@@ -10602,6 +10689,7 @@
   $.currentTime = 0;
   $.curFrame = 0;
   $.isLocal = null;
+  $.room = null;
   $.buffer = 3;
   $.inputBuffer = null;
   $.ws = null;
@@ -10726,7 +10814,7 @@
   Isolate = Isolate.$finishIsolateConstructor(Isolate);
   $ = new Isolate();
   init.metadata = [null, 0];
-  init.types = [{func: 1}, {func: 1, args: [,]}, {func: 1, v: true}, {func: 1, args: [,,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, v: true, args: [P.Uint8List, P.String, P.int]}, {func: 1, v: true, args: [W.KeyboardEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, v: true, args: [P.String, P.int]}, {func: 1, v: true, args: [P.String], opt: [,]}, {func: 1, ret: P.int, args: [P.int, P.int]}, {func: 1, ret: P.Uint8List, args: [,,]}, {func: 1, args: [W.MessageEvent]}, {func: 1, v: true, args: [P.num]}];
+  init.types = [{func: 1}, {func: 1, args: [,]}, {func: 1, v: true}, {func: 1, args: [,,]}, {func: 1, v: true, args: [{func: 1, v: true}]}, {func: 1, ret: P.String, args: [P.int]}, {func: 1, v: true, args: [P.Uint8List, P.String, P.int]}, {func: 1, args: [W.MessageEvent]}, {func: 1, v: true, args: [W.KeyboardEvent]}, {func: 1, args: [, P.String]}, {func: 1, args: [P.String]}, {func: 1, args: [{func: 1, v: true}]}, {func: 1, v: true, args: [P.Object], opt: [P.StackTrace]}, {func: 1, args: [,], opt: [,]}, {func: 1, v: true, args: [, P.StackTrace]}, {func: 1, v: true, args: [P.String, P.int]}, {func: 1, v: true, args: [P.String], opt: [,]}, {func: 1, ret: P.int, args: [P.int, P.int]}, {func: 1, ret: P.Uint8List, args: [,,]}, {func: 1, v: true, args: [P.num]}];
   function convertToFastObject(properties) {
     function MyClass() {
     }

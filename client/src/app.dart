@@ -22,6 +22,7 @@ num currentTime = 0;
 int curFrame = 0;
 
 bool isLocal;
+String room;
 int buffer = DEFAULT_BUFFER;
 List<LocalPlayer> localPlayers = new List();
 
@@ -47,7 +48,8 @@ void processInput(){
       var message = {"type": "update",
                    "frame": curFrame,
                    "playerId": player.id,
-                   "playerInput": playerInput.toJSON()};
+                   "playerInput": playerInput.toJSON(),
+                   "room": room};
       ws.send(JSON.encode(message));
     }
 
@@ -75,17 +77,6 @@ void loop(num frames) {
 }
 
 void startGame(){
-  InputElement bufferInput = querySelector("#buffer");
-  int bufferInputValue = -1;
-  print(bufferInput.value);
-  try {
-    bufferInputValue = int.parse(bufferInput.value);
-  } catch(e) {
-    print(e);
-  }
-
-  print(bufferInputValue);
-
   querySelector('#options').hidden = true;
 
   var gameDiv = querySelector('#game');
@@ -111,7 +102,25 @@ void startGame(){
 
     loop(0);
   }else{
+    InputElement bufferInput = querySelector("#buffer");
+    int bufferInputValue = -1;
+    try {
+      bufferInputValue = int.parse(bufferInput.value);
+    } catch(e) {
+      print(e);
+    }
+
+    InputElement roomInput = querySelector("#room");
+    room = roomInput.value.trim().toLowerCase();
+
     ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/');
+
+    ws.onOpen.listen((MessageEvent e){
+      var joinMessage = {"type": "joinRoom",
+                    "room": room};
+      ws.send(JSON.encode(joinMessage));
+    });
+    
 
     ws.onMessage.listen((MessageEvent e){
       var data = JSON.decode(e.data);
