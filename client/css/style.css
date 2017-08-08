@@ -1,0 +1,34 @@
+body {
+    background-color:#444444;
+    font-family: Helvetica, Sans-Serif;
+}
+
+#game {
+    position:relative;
+    margin:15px auto;
+    width:750px;
+}
+
+.container
+{
+    width:770px;
+    padding:25px;
+    border:5px solid gray;
+    margin:10px;
+    margin-left:auto; 
+    margin-right:auto;
+    text-align:justify;
+    background-color:white;
+}
+
+.innerbox
+{
+    margin:10px;
+    margin-left:50px;
+}
+
+#buffer
+{
+    width:40px;
+}
+
