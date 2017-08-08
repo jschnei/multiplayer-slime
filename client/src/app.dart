@@ -131,6 +131,7 @@ void startGame(){
           localPlayers.add(new LocalPlayer(data["playerId"], DEFAULT_P1_MAPPING));
           if(bufferInputValue > 0){
             var message = {"type": "setBuffer",
+                           "room": room,
                            "buffer": bufferInputValue};
             ws.send(JSON.encode(message));
           }
