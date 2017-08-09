@@ -52,8 +52,6 @@ void handleWebSocket(WebSocket webSocket) {
       String type = json["type"];
       String roomName = json["room"];
       Room room = rooms[roomName];
-      print(json);
-      print(room);
       switch (type) {
         case "update":
           var message = {
@@ -66,7 +64,7 @@ void handleWebSocket(WebSocket webSocket) {
           break;
         case "joinRoom":
           if(room == null){
-            print("creating new room $roomName");
+            print("Creating new room $roomName");
             rooms[roomName] = new Room(roomName);
             room = rooms[roomName];
           }
