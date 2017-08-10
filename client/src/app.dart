@@ -76,7 +76,7 @@ void loop(num frames) {
   }
 }
 
-void startGame(){
+void startGame({bool create}){
   querySelector('#options').hidden = true;
 
   var gameDiv = querySelector('#game');
@@ -110,14 +110,14 @@ void startGame(){
       print(e);
     }
 
-    InputElement roomInput = querySelector("#room");
+    InputElement roomInput = querySelector(create ? "#room_create" : "#room_join");
     room = roomInput.value.trim().toLowerCase();
 
     ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/');
 
     ws.onOpen.listen((MessageEvent e){
-      var joinMessage = {"type": "joinRoom",
-                    "room": room};
+      var joinMessage = {"type": create ? "createRoom" : "joinRoom",
+                         "room": room};
       ws.send(JSON.encode(joinMessage));
     });
     
@@ -162,10 +162,14 @@ void main() {
     startGame();
   });
 
-  querySelector('#network').onClick.listen((e){
+  querySelector('#network_create').onClick.listen((e){
     isLocal = false;
-    startGame();
+    startGame(create: true);
   });
   
+  querySelector('#network_join').onClick.listen((e){
+    isLocal = false;
+    startGame(create: false);
+  });
 }
 
