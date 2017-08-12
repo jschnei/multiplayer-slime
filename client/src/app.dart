@@ -218,5 +218,5 @@ void hide(Element el){
 }
 
 void show(Element el){
-  el.style.display = '';
+  el.style.display = 'block';
 }

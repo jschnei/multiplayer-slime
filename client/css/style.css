@@ -32,6 +32,7 @@ body {
     background-color:palevioletred;
     border:3px solid red;
     font-weight: bold;
+    display: none;
 }
 
 #buffer

@@ -10812,7 +10812,7 @@
       t3 = t2.querySelector("#errors").style;
       t3.display = "none";
       t3 = t2.querySelector("#game").style;
-      t3.display = "";
+      t3.display = "block";
       gameDiv = t2.querySelector("#game");
       e1 = t2.createElement("canvas");
       $.canvas = e1;
@@ -10889,9 +10889,9 @@
       t1 = document;
       t1.querySelector("#errors").textContent = error;
       t2 = t1.querySelector("#errors").style;
-      t2.display = "";
+      t2.display = "block";
       t2 = t1.querySelector("#options").style;
-      t2.display = "";
+      t2.display = "block";
       J.set$innerHtml$x(t1.querySelector("#game"), "");
       t1 = t1.querySelector("#game").style;
       t1.display = "none";
