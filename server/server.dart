@@ -120,6 +120,9 @@ void handleWebSocket(WebSocket webSocket) {
             room.buffer = json["buffer"];
             print("Set buffer for $roomName to ${room.buffer}");
             break;
+          case "error":
+            print(json["message"]);
+            break;
         }
       }
     } catch (e) {

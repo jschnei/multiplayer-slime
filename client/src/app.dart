@@ -77,7 +77,9 @@ void loop(num frames) {
 }
 
 void startGame({bool create}){
-  querySelector('#options').hidden = true;
+  hide(querySelector('#options'));
+  hide(querySelector("#errors"));
+  show(querySelector('#game'));
 
   var gameDiv = querySelector('#game');
   canvas = new CanvasElement();
@@ -102,61 +104,86 @@ void startGame({bool create}){
 
     loop(0);
   }else{
-    InputElement bufferInput = querySelector("#buffer");
     int bufferInputValue = -1;
-    try {
-      bufferInputValue = int.parse(bufferInput.value);
-    } catch(e) {
-      print(e);
+    
+    if(create){
+      InputElement bufferInput = querySelector("#buffer");
+
+      try {
+        bufferInputValue = int.parse(bufferInput.value);
+
+        if(bufferInputValue <=0){
+          throw new Error();
+        }
+      } catch(e) {
+        print(e.toString());
+        displayError("Error: invalid buffer value");
+        return;
+      }
+
     }
 
     InputElement roomInput = querySelector(create ? "#room_create" : "#room_join");
     room = roomInput.value.trim().toLowerCase();
 
-    ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/');
+    try{
+      ws = new WebSocket('ws://${Uri.base.host}:${SERVER_PORT}/');
 
-    ws.onOpen.listen((MessageEvent e){
-      var joinMessage = {"type": create ? "createRoom" : "joinRoom",
-                         "room": room};
-      ws.send(JSON.encode(joinMessage));
-    });
-    
+      ws.onError.listen((MessageEvent e){
+        displayError("Error: unable to reach server");
+      });
 
-    ws.onMessage.listen((MessageEvent e){
-      var data = JSON.decode(e.data);
-      String type = data["type"];
+      ws.onOpen.listen((MessageEvent e){
+        var joinMessage = {"type": create ? "createRoom" : "joinRoom",
+                          "room": room};
+        ws.send(JSON.encode(joinMessage));
+      });
       
-      switch(type){
-        case "init":
-          localPlayers.add(new LocalPlayer(data["playerId"], DEFAULT_P1_MAPPING));
-          if(bufferInputValue > 0){
-            var message = {"type": "setBuffer",
-                           "room": room,
-                           "buffer": bufferInputValue};
-            ws.send(JSON.encode(message));
-          }
-          break;
 
-        case "start":
-          buffer = data["buffer"];
-          inputBuffer = new InputBuffer(buffer);
-          loop(0);
-          break;
-
-        case "update":
-          inputBuffer[data["frame"] + buffer][data["playerId"]] = new PlayerInput.fromJSON(data["playerInput"]);
-          break;
+      ws.onMessage.listen((MessageEvent e){
+        var data = JSON.decode(e.data);
+        String type = data["type"];
         
-        case "error":
-          print(data["message"]);
-          break;
-      }
-    });
+        switch(type){
+          case "init":
+            localPlayers.add(new LocalPlayer(data["playerId"], DEFAULT_P1_MAPPING));
+            if(bufferInputValue > 0){
+              var message = {"type": "setBuffer",
+                            "room": room,
+                            "buffer": bufferInputValue};
+              ws.send(JSON.encode(message));
+            }
+            break;
+
+          case "start":
+            buffer = data["buffer"];
+            inputBuffer = new InputBuffer(buffer);
+            loop(0);
+            break;
+
+          case "update":
+            inputBuffer[data["frame"] + buffer][data["playerId"]] = new PlayerInput.fromJSON(data["playerInput"]);
+            break;
+          
+          case "error":
+            displayError(data["message"]);
+            break;
+        }
+      });
+
+    } catch(e) {
+      print(e);
+      displayError("Error: unable to reach server");
+    }
   }
 }
 
 void main() {
+  // hack so #errors doesn't flicker in before page loads
+//  querySelector('#errors').hidden = true;
   
+  //hide(querySelector("#errors"));
+
   querySelector('#local').onClick.listen((e){
     isLocal = true;
     startGame();
@@ -173,3 +200,23 @@ void main() {
   });
 }
 
+void displayError(error){
+  print(error);
+  Element errorBox = querySelector("#errors");
+  errorBox.text = error;
+
+  show(querySelector("#errors"));
+  show(querySelector("#options"));
+
+  querySelector("#game").innerHtml = "";
+  hide(querySelector("#game"));
+}
+
+// workaround, since .hidden seems to act strangely
+void hide(Element el){
+  el.style.display = 'none';
+}
+
+void show(Element el){
+  el.style.display = '';
+}
