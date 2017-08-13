@@ -68,7 +68,7 @@ class Room {
     for (var socket in players) {
       if (socket.readyState == WebSocket.OPEN) {
         var endMessage = {
-          "type": "end",
+          "type": "error",
           "message": "A player has disconnected."
         };
         socket.add(JSON.encode(endMessage));
