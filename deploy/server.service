@@ -1,0 +1,15 @@
+[Unit]
+Description=Multislime Server
+
+[Service]
+ExecStart=/usr/bin/dart server.dart
+
+WorkingDirectory=/srv/multiplayer-slime/server
+
+User=root
+Group=root
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

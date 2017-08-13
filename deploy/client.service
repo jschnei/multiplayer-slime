@@ -1,0 +1,15 @@
+[Unit]
+Description=Multislime Client
+
+[Service]
+ExecStart=/usr/bin/python -m SimpleHTTPServer 80
+
+WorkingDirectory=/srv/multiplayer-slime/client
+
+User=root
+Group=root
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
