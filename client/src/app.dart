@@ -6,12 +6,18 @@ import 'consts.dart';
 import 'input.dart';
 import 'slime_volleyball.dart' as SlimeVolleyball;
 
-abstract class GameState {
+abstract class AbstractGame {
   void render(CanvasRenderingContext2D ctx, CanvasElement canvas);
   void update(FrameInput inputs);
 }
 
-GameState gameState;
+enum GameState {
+  RUNNING,
+  STOPPED
+}
+
+AbstractGame game;
+GameState gameState = GameState.STOPPED;
 
 CanvasElement canvas;
 CanvasRenderingContext2D ctx;
@@ -57,6 +63,10 @@ void processInput(){
 }
 
 void loop(num frames) {
+  if(gameState == GameState.STOPPED){
+    return;
+  }
+
   window.requestAnimationFrame(loop);
 
   currentTime = new DateTime.now().millisecondsSinceEpoch;
@@ -64,8 +74,8 @@ void loop(num frames) {
 
   if (delta > interval) {
     if (inputBuffer[curFrame].hasInputs()) {
-      gameState.update(inputBuffer[curFrame]);
-      gameState.render(ctx, canvas);
+      game.update(inputBuffer[curFrame]);
+      game.render(ctx, canvas);
       processInput();
 
       lastTime = currentTime;
@@ -74,6 +84,12 @@ void loop(num frames) {
       print("Waiting for input for frame $curFrame");
     }
   }
+}
+
+void resetGame(){
+  gameState = GameState.STOPPED;
+  curFrame = 0;
+  localPlayers = new List();
 }
 
 void startGame({bool create}){
@@ -92,7 +108,7 @@ void startGame({bool create}){
 
   ctx = canvas.getContext("2d");
 
-  gameState = new SlimeVolleyball.Game();
+  game = new SlimeVolleyball.Game();
 
   if(isLocal){
     // no need to connect to the websocket, just register local players
@@ -102,6 +118,7 @@ void startGame({bool create}){
     buffer = LOCAL_BUFFER;
     inputBuffer = new InputBuffer(buffer);
 
+    gameState = GameState.RUNNING;
     loop(0);
   }else{
     int bufferInputValue = -1;
@@ -158,13 +175,15 @@ void startGame({bool create}){
           case "start":
             buffer = data["buffer"];
             inputBuffer = new InputBuffer(buffer);
+
+            gameState = GameState.RUNNING;
             loop(0);
             break;
 
           case "update":
             inputBuffer[data["frame"] + buffer][data["playerId"]] = new PlayerInput.fromJSON(data["playerInput"]);
             break;
-          
+
           case "error":
             displayError(data["message"]);
             break;
@@ -207,6 +226,8 @@ void displayError(error){
 
   show(querySelector("#errors"));
   show(querySelector("#options"));
+
+  resetGame();
 
   querySelector("#game").innerHtml = "";
   hide(querySelector("#game"));

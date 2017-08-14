@@ -5,7 +5,7 @@ import 'app.dart';
 import 'input.dart';
 import 'consts.dart';
 
-class Game implements GameState {
+class Game implements AbstractGame {
   List<Slime> slimes;
   Ball ball;
 

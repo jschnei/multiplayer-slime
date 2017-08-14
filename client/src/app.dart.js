@@ -10779,6 +10779,8 @@
     },
     loop: [function($frames) {
       var t1, t2, t3;
+      if ($.gameState === C.GameState_1)
+        return;
       t1 = window;
       C.Window_methods._ensureRequestAnimationFrame$0(t1);
       C.Window_methods._requestAnimationFrame$1(t1, W._wrapZone(S.app__loop$closure()));
@@ -10794,8 +10796,8 @@
         t1 = $.inputBuffer.$index(0, $.curFrame).hasInputs$0();
         t2 = $.curFrame;
         if (t1) {
-          $.gameState.update$1($.inputBuffer.$index(0, t2));
-          $.gameState.render$2($.ctx, $.canvas);
+          $.game.update$1($.inputBuffer.$index(0, t2));
+          $.game.render$2($.ctx, $.canvas);
           S.processInput();
           $.lastTime = $.currentTime;
           $.curFrame = $.curFrame + 1;
@@ -10829,12 +10831,13 @@
       t3.slimes = [new R.Slime(50, "#f00", 0, 495, null, null, null, null), new R.Slime(50, "#0f0", 505, 1000, null, null, null, null)];
       t3.ball = new R.Ball(15, "#ff0", null, null, null, null);
       t3.initRound$1(true);
-      $.gameState = t3;
+      $.game = t3;
       if ($.isLocal === true) {
         $.$get$localPlayers().push(new Y.LocalPlayer(0, $.$get$DEFAULT_P1_MAPPING()));
         $.$get$localPlayers().push(new Y.LocalPlayer(1, $.$get$DEFAULT_P2_MAPPING()));
         $.buffer = 2;
         $.inputBuffer = Y.InputBuffer$(2);
+        $.gameState = C.GameState_0;
         S.loop(0);
       } else {
         t1.bufferInputValue = -1;
@@ -10892,9 +10895,18 @@
       t2.display = "block";
       t2 = t1.querySelector("#options").style;
       t2.display = "block";
+      $.gameState = C.GameState_1;
+      $.curFrame = 0;
+      $.localPlayers = [];
       J.set$innerHtml$x(t1.querySelector("#game"), "");
       t1 = t1.querySelector("#game").style;
       t1.display = "none";
+    },
+    GameState: {
+      "^": "Object;index,_app$_name",
+      toString$0: function(_) {
+        return this._app$_name;
+      }
     },
     startGame_closure: {
       "^": "Closure:4;",
@@ -10930,6 +10942,7 @@
             t1 = J.$index$asx(data, "buffer");
             $.buffer = t1;
             $.inputBuffer = Y.InputBuffer$(t1);
+            $.gameState = C.GameState_0;
             S.loop(0);
             break;
           case "update":
@@ -11638,6 +11651,8 @@
   C.C__DelayedDone = new P._DelayedDone();
   C.C__RootZone = new P._RootZone();
   C.Duration_0 = new P.Duration(0);
+  C.GameState_0 = new S.GameState(0, "GameState.RUNNING");
+  C.GameState_1 = new S.GameState(1, "GameState.STOPPED");
   C.Input_0 = new Y.Input(0, "Input.Left");
   C.Input_1 = new Y.Input(1, "Input.Up");
   C.Input_2 = new Y.Input(2, "Input.Right");
@@ -11687,7 +11702,8 @@
   $.Element__parseRange = null;
   $.Element__defaultValidator = null;
   $.Element__defaultSanitizer = null;
-  $.gameState = null;
+  $.game = null;
+  $.gameState = C.GameState_1;
   $.canvas = null;
   $.ctx = null;
   $.interval = 16.666666666666668;
