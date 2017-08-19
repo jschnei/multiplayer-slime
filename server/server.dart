@@ -1,14 +1,18 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'logging.dart';
+
 const NUM_PLAYERS = 2;
 const DEFAULT_BUFFER = 3;
+
+const LOG_FILE = "logs/server.log";
+Logger logger = new Logger(LOG_FILE);
 
 Map<String, Room> rooms = new Map<String, Room>();
 
 void sendError(socket, message) {
-  message = "Error: $message";
-  print(message);
+  logger.log(message, "error");
   var errorMessage = {"type": "error", "message": message};
   socket.add(JSON.encode(errorMessage));
 }
@@ -41,7 +45,7 @@ class Room {
 
       var initMessage = {"type": "init", "playerId": playerId};
       socket.add(JSON.encode(initMessage));
-      print("Player $playerId connected.");
+      logger.log("Player $playerId connected.");
 
       if (players.length == NUM_PLAYERS) {
         startGame();
@@ -54,7 +58,7 @@ class Room {
 
   void startGame() {
     var startMessage = {"type": "start", "buffer": buffer};
-    print("Starting game in room $name...");
+    logger.log("Starting game in room $name...");
     broadcastMessage(startMessage);
     state = RoomState.GAME_RUNNING;
   }
@@ -62,7 +66,7 @@ class Room {
   void destroyRoom() {
     if (state == RoomState.CLOSED) return; // already being destroyed
 
-    print("Closing room $name");
+    logger.log("Closing room $name");
     state = RoomState.CLOSED;
 
     for (var socket in players) {
@@ -104,7 +108,7 @@ void handleWebSocket(WebSocket webSocket) {
             break;
           case "createRoom":
             if (room == null) {
-              print("Creating new room $roomName");
+              logger.log("Creating new room $roomName");
               rooms[roomName] = new Room(roomName);
               room = rooms[roomName];
 
@@ -118,31 +122,32 @@ void handleWebSocket(WebSocket webSocket) {
             break;
           case "setBuffer":
             room.buffer = json["buffer"];
-            print("Set buffer for $roomName to ${room.buffer}");
+            logger.log("Set buffer for $roomName to ${room.buffer}");
             break;
           case "error":
-            print(json["message"]);
+            logger.log(json["message"]);
             break;
         }
       }
     } catch (e) {
-      print(e);
+      logger.log(e.toString(), 'error');
     }
   });
 }
 
 main() async {
   HttpServer server = await HttpServer.bind(InternetAddress.ANY_IP_V4, 8018);
-  print('listening on 0.0.0.0, port ${server.port}');
+  logger.log('Listening on 0.0.0.0, port ${server.port}', 'init');
 
   await for (HttpRequest request in server) {
     try {
+      logger.log(request.connectionInfo.remoteAddress.toString(), "ip");
       var webSocket = await WebSocketTransformer.upgrade(request);
       handleWebSocket(webSocket);
     } on WebSocketException {
-      print("Error: must connect via websocket protocol");
+      logger.log("must connect via websocket protocol", 'error');
     } catch (e) {
-      print(e);
+      logger.log(e.toString(), 'error');
     }
   }
 }
