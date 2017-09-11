@@ -2479,7 +2479,7 @@
       } else
         $name = null;
       if ($name == null || interceptor === C.Interceptor_methods || !!J.getInterceptor(object).$isUnknownJavaScriptObject) {
-        dispatchName = C.JS_CONST_TSE(object);
+        dispatchName = C.JS_CONST_u2C(object);
         if (dispatchName === "Object") {
           objectConstructor = object.constructor;
           if (typeof objectConstructor == "function") {
@@ -3467,8 +3467,8 @@
     },
     initHooks: function() {
       var hooks, transformers, i, transformer, getTag, getUnknownTag, prototypeForTag;
-      hooks = C.JS_CONST_4IJ();
-      hooks = H.applyHooksTransformer(C.JS_CONST_EKH, H.applyHooksTransformer(C.JS_CONST_EyN, H.applyHooksTransformer(C.JS_CONST_AgZ, H.applyHooksTransformer(C.JS_CONST_AgZ, H.applyHooksTransformer(C.JS_CONST_c0o, H.applyHooksTransformer(C.JS_CONST_LlX, H.applyHooksTransformer(C.JS_CONST_nuk(C.JS_CONST_TSE), hooks)))))));
+      hooks = C.JS_CONST_bDt();
+      hooks = H.applyHooksTransformer(C.JS_CONST_0, H.applyHooksTransformer(C.JS_CONST_rr7, H.applyHooksTransformer(C.JS_CONST_Fs4, H.applyHooksTransformer(C.JS_CONST_Fs4, H.applyHooksTransformer(C.JS_CONST_gkc, H.applyHooksTransformer(C.JS_CONST_4hp, H.applyHooksTransformer(C.JS_CONST_QJm(C.JS_CONST_u2C), hooks)))))));
       if (typeof dartNativeDispatchHooksTransformer != "undefined") {
         transformers = dartNativeDispatchHooksTransformer;
         if (typeof transformers == "function")
@@ -10806,7 +10806,7 @@
       }
     }, "call$1", "app__loop$closure", 2, 0, 21],
     startGame: function(create) {
-      var t1, bufferInput, e, e0, t2, t3, gameDiv, e1, bufferInputValue, exception;
+      var t1, bufferInput, e, e0, t2, t3, gameDiv, e1, t4, bufferInputValue, exception;
       t1 = {};
       t2 = document;
       t3 = t2.querySelector("#options").style;
@@ -10826,10 +10826,14 @@
       W._EventStreamSubscription$(window, "keyup", S.app__keyUp$closure(), false, t3);
       t3 = $.canvas;
       $.ctx = (t3 && C.CanvasElement_methods).getContext$1(t3, "2d");
-      t3 = new R.Game(null, null);
+      t3 = new R.Game(null, null, null);
       $.GameObject_game = t3;
       t3.slimes = [new R.Slime(50, "#f00", 0, 495, null, null, null, null), new R.Slime(50, "#0f0", 505, 1000, null, null, null, null)];
       t3.ball = new R.Ball(15, "#ff0", null, null, null, null);
+      t4 = new R.ScoreBoard(5, null, null);
+      t4.player1Score = 5;
+      t4.player2Score = 5;
+      t3.scoreBoard = t4;
       t3.initRound$1(true);
       $.game = t3;
       if ($.isLocal === true) {
@@ -11125,7 +11129,7 @@
   }], ["", "slime_volleyball.dart",, R, {
     "^": "",
     Game: {
-      "^": "Object;slimes,ball",
+      "^": "Object;scoreBoard,slimes,ball",
       update$1: function(frameInput) {
         var t1, id, keys, slime, t2, _i;
         for (t1 = J.getInterceptor$asx(frameInput), id = 0; id < 2; ++id) {
@@ -11157,9 +11161,21 @@
         ctx.fillRect(0, 292, 730, 73);
         ctx.fillStyle = "#fff";
         ctx.fillRect(363, 255.5, 4, 41.5);
+        this.scoreBoard.render$2(ctx, canvas);
         for (t1 = this.slimes, t1.length, _i = 0; _i < 2; ++_i)
           t1[_i].render$2(ctx, canvas);
         this.ball.render$2(ctx, canvas);
+      },
+      score$1: function(player) {
+        var t1 = this.scoreBoard;
+        if (player) {
+          ++t1.player1Score;
+          --t1.player2Score;
+        } else {
+          --t1.player1Score;
+          ++t1.player2Score;
+        }
+        this.initRound$1(player);
       },
       initRound$1: function(server) {
         var t1, t2;
@@ -11179,6 +11195,22 @@
         t1.y = 0;
         t1.velocityX = 0;
         t1.velocityY = 0;
+      }
+    },
+    ScoreBoard: {
+      "^": "Object;winBy,player1Score,player2Score",
+      render$2: function(ctx, canvas) {
+        var i;
+        for (i = 0; i < this.player1Score; ++i)
+          this.renderBall$5(ctx, canvas, 73 + i * 45, 36.5, "#f00");
+        for (i = 0; i < this.player2Score; ++i)
+          this.renderBall$5(ctx, canvas, 730 - (73 + i * 45) - 15, 36.5, "#0f0");
+      },
+      renderBall$5: function(ctx, canvas, x, y, color) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, 15, 0, 6.283185307179586, false);
+        ctx.fill("nonzero");
       }
     },
     GameObject: {
@@ -11400,9 +11432,9 @@
         if (t2 < 0) {
           t2 = $.GameObject_game;
           if (t1 > 500)
-            t2.initRound$1(true);
+            t2.score$1(true);
           else
-            t2.initRound$1(false);
+            t2.score$1(false);
         }
       }
     }
@@ -11657,14 +11689,126 @@
   C.Input_1 = new Y.Input(1, "Input.Up");
   C.Input_2 = new Y.Input(2, "Input.Right");
   C.Input_3 = new Y.Input(3, "Input.Down");
-  C.JS_CONST_4IJ = function() {  var toStringFunction = Object.prototype.toString;  function getTag(o) {    var s = toStringFunction.call(o);    return s.substring(8, s.length - 1);  }  function getUnknownTag(object, tag) {    if (/^HTML[A-Z].*Element$/.test(tag)) {      var name = toStringFunction.call(object);      if (name == "[object Object]") return null;      return "HTMLElement";    }  }  function getUnknownTagGenericBrowser(object, tag) {    if (self.HTMLElement && object instanceof HTMLElement) return "HTMLElement";    return getUnknownTag(object, tag);  }  function prototypeForTag(tag) {    if (typeof window == "undefined") return null;    if (typeof window[tag] == "undefined") return null;    var constructor = window[tag];    if (typeof constructor != "function") return null;    return constructor.prototype;  }  function discriminator(tag) { return null; }  var isBrowser = typeof navigator == "object";  return {    getTag: getTag,    getUnknownTag: isBrowser ? getUnknownTagGenericBrowser : getUnknownTag,    prototypeForTag: prototypeForTag,    discriminator: discriminator };};
-  C.JS_CONST_AgZ = function(hooks) { return hooks; };
-  C.JS_CONST_EKH = function(hooks) {  if (typeof dartExperimentalFixupGetTag != "function") return hooks;  hooks.getTag = dartExperimentalFixupGetTag(hooks.getTag);};
-  C.JS_CONST_EyN = function(hooks) {  var getTag = hooks.getTag;  var prototypeForTag = hooks.prototypeForTag;  function getTagFixed(o) {    var tag = getTag(o);    if (tag == "Document") {      // "Document", so we check for the xmlVersion property, which is the empty      if (!!o.xmlVersion) return "!Document";      return "!HTMLDocument";    }    return tag;  }  function prototypeForTagFixed(tag) {    if (tag == "Document") return null;    return prototypeForTag(tag);  }  hooks.getTag = getTagFixed;  hooks.prototypeForTag = prototypeForTagFixed;};
-  C.JS_CONST_LlX = function(hooks) {  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";  if (userAgent.indexOf("Firefox") == -1) return hooks;  var getTag = hooks.getTag;  var quickMap = {    "BeforeUnloadEvent": "Event",    "DataTransfer": "Clipboard",    "GeoGeolocation": "Geolocation",    "Location": "!Location",    "WorkerMessageEvent": "MessageEvent",    "XMLDocument": "!Document"};  function getTagFirefox(o) {    var tag = getTag(o);    return quickMap[tag] || tag;  }  hooks.getTag = getTagFirefox;};
-  C.JS_CONST_TSE = function getTagFallback(o) {  var s = Object.prototype.toString.call(o);  return s.substring(8, s.length - 1);};
-  C.JS_CONST_c0o = function(hooks) {  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";  if (userAgent.indexOf("Trident/") == -1) return hooks;  var getTag = hooks.getTag;  var quickMap = {    "BeforeUnloadEvent": "Event",    "DataTransfer": "Clipboard",    "HTMLDDElement": "HTMLElement",    "HTMLDTElement": "HTMLElement",    "HTMLPhraseElement": "HTMLElement",    "Position": "Geoposition"  };  function getTagIE(o) {    var tag = getTag(o);    var newTag = quickMap[tag];    if (newTag) return newTag;    if (tag == "Object") {      if (window.DataView && (o instanceof window.DataView)) return "DataView";    }    return tag;  }  function prototypeForTagIE(tag) {    var constructor = window[tag];    if (constructor == null) return null;    return constructor.prototype;  }  hooks.getTag = getTagIE;  hooks.prototypeForTag = prototypeForTagIE;};
-  C.JS_CONST_nuk = function(getTagFallback) {  return function(hooks) {    if (typeof navigator != "object") return hooks;    var ua = navigator.userAgent;    if (ua.indexOf("DumpRenderTree") >= 0) return hooks;    if (ua.indexOf("Chrome") >= 0) {      function confirm(p) {        return typeof window == "object" && window[p] && window[p].name == p;      }      if (confirm("Window") && confirm("HTMLElement")) return hooks;    }    hooks.getTag = getTagFallback;  };};
+  C.JS_CONST_0 = function(hooks) {
+  if (typeof dartExperimentalFixupGetTag != "function") return hooks;
+  hooks.getTag = dartExperimentalFixupGetTag(hooks.getTag);
+};
+  C.JS_CONST_4hp = function(hooks) {
+  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";
+  if (userAgent.indexOf("Firefox") == -1) return hooks;
+  var getTag = hooks.getTag;
+  var quickMap = {
+    "BeforeUnloadEvent": "Event",
+    "DataTransfer": "Clipboard",
+    "GeoGeolocation": "Geolocation",
+    "Location": "!Location",
+    "WorkerMessageEvent": "MessageEvent",
+    "XMLDocument": "!Document"};
+  function getTagFirefox(o) {
+    var tag = getTag(o);
+    return quickMap[tag] || tag;
+  }
+  hooks.getTag = getTagFirefox;
+};
+  C.JS_CONST_Fs4 = function(hooks) { return hooks; }
+;
+  C.JS_CONST_QJm = function(getTagFallback) {
+  return function(hooks) {
+    if (typeof navigator != "object") return hooks;
+    var ua = navigator.userAgent;
+    if (ua.indexOf("DumpRenderTree") >= 0) return hooks;
+    if (ua.indexOf("Chrome") >= 0) {
+      function confirm(p) {
+        return typeof window == "object" && window[p] && window[p].name == p;
+      }
+      if (confirm("Window") && confirm("HTMLElement")) return hooks;
+    }
+    hooks.getTag = getTagFallback;
+  };
+};
+  C.JS_CONST_bDt = function() {
+  var toStringFunction = Object.prototype.toString;
+  function getTag(o) {
+    var s = toStringFunction.call(o);
+    return s.substring(8, s.length - 1);
+  }
+  function getUnknownTag(object, tag) {
+    if (/^HTML[A-Z].*Element$/.test(tag)) {
+      var name = toStringFunction.call(object);
+      if (name == "[object Object]") return null;
+      return "HTMLElement";
+    }
+  }
+  function getUnknownTagGenericBrowser(object, tag) {
+    if (self.HTMLElement && object instanceof HTMLElement) return "HTMLElement";
+    return getUnknownTag(object, tag);
+  }
+  function prototypeForTag(tag) {
+    if (typeof window == "undefined") return null;
+    if (typeof window[tag] == "undefined") return null;
+    var constructor = window[tag];
+    if (typeof constructor != "function") return null;
+    return constructor.prototype;
+  }
+  function discriminator(tag) { return null; }
+  var isBrowser = typeof navigator == "object";
+  return {
+    getTag: getTag,
+    getUnknownTag: isBrowser ? getUnknownTagGenericBrowser : getUnknownTag,
+    prototypeForTag: prototypeForTag,
+    discriminator: discriminator };
+};
+  C.JS_CONST_gkc = function(hooks) {
+  var userAgent = typeof navigator == "object" ? navigator.userAgent : "";
+  if (userAgent.indexOf("Trident/") == -1) return hooks;
+  var getTag = hooks.getTag;
+  var quickMap = {
+    "BeforeUnloadEvent": "Event",
+    "DataTransfer": "Clipboard",
+    "HTMLDDElement": "HTMLElement",
+    "HTMLDTElement": "HTMLElement",
+    "HTMLPhraseElement": "HTMLElement",
+    "Position": "Geoposition"
+  };
+  function getTagIE(o) {
+    var tag = getTag(o);
+    var newTag = quickMap[tag];
+    if (newTag) return newTag;
+    if (tag == "Object") {
+      if (window.DataView && (o instanceof window.DataView)) return "DataView";
+    }
+    return tag;
+  }
+  function prototypeForTagIE(tag) {
+    var constructor = window[tag];
+    if (constructor == null) return null;
+    return constructor.prototype;
+  }
+  hooks.getTag = getTagIE;
+  hooks.prototypeForTag = prototypeForTagIE;
+};
+  C.JS_CONST_rr7 = function(hooks) {
+  var getTag = hooks.getTag;
+  var prototypeForTag = hooks.prototypeForTag;
+  function getTagFixed(o) {
+    var tag = getTag(o);
+    if (tag == "Document") {
+      if (!!o.xmlVersion) return "!Document";
+      return "!HTMLDocument";
+    }
+    return tag;
+  }
+  function prototypeForTagFixed(tag) {
+    if (tag == "Document") return null;
+    return prototypeForTag(tag);
+  }
+  hooks.getTag = getTagFixed;
+  hooks.prototypeForTag = prototypeForTagFixed;
+};
+  C.JS_CONST_u2C = function getTagFallback(o) {
+  var s = Object.prototype.toString.call(o);
+  return s.substring(8, s.length - 1);
+};
   C.JsonCodec_null_null = new P.JsonCodec(null, null);
   C.JsonDecoder_null = new P.JsonDecoder(null);
   C.JsonEncoder_null_null = new P.JsonEncoder(null, null);

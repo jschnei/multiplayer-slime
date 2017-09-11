@@ -4,12 +4,9 @@ TODO
 Priority:
 ---------
 
-- add local (non-networked) mode
-- create rooms
-- create ability to reset rooms 
 - add scoring to game
-- write scripts to manage client and server processes
-- should be able to set buffer
+- switch keymappings for local mode? (allow both WASD and arrow keys for networked?)
+- display open rooms
 
 Longer Term:
 ------------
@@ -21,3 +18,8 @@ Completed:
 ----------
 
 - server breaks when try to access ws path with http request (add error handling)
+- add local (non-networked) mode
+- create rooms
+- create ability to reset rooms (rooms reset themselves right now pretty accurately)
+- write scripts to manage client and server processes
+- should be able to set buffer

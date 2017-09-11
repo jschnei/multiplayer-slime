@@ -6,15 +6,18 @@ import 'input.dart';
 import 'consts.dart';
 
 class Game implements AbstractGame {
+  ScoreBoard scoreBoard;
   List<Slime> slimes;
   Ball ball;
+  
 
   Game(){
     GameObject.game = this;
 
-    slimes = [new Slime(SLIME_RADIUS, '#f00', 0, 495),
-              new Slime(SLIME_RADIUS, '#0f0', 505, 1000)];
-    ball = new Ball(BALL_RADIUS, '#ff0');
+    slimes = [new Slime(SLIME_RADIUS, SLIME_1_COLOR, 0, 495),
+              new Slime(SLIME_RADIUS, SLIME_2_COLOR, 505, 1000)];
+    ball = new Ball(BALL_RADIUS, BALL_COLOR);
+    scoreBoard = new ScoreBoard();
 
     initRound(true);
   }
@@ -50,20 +53,34 @@ class Game implements AbstractGame {
 
   void render(CanvasRenderingContext2D ctx, CanvasElement canvas){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     const courtHeight = GAME_HEIGHT/5;
     ctx.fillStyle='#0077ff';
-    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT-courtHeight);
+    ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT-courtHeight); // draw sky
     ctx.fillStyle='#ca6';
-    ctx.fillRect(0, GAME_HEIGHT-courtHeight, GAME_WIDTH, courtHeight);
+    ctx.fillRect(0, GAME_HEIGHT-courtHeight, GAME_WIDTH, courtHeight); // draw ground
     ctx.fillStyle='#fff';
-    ctx.fillRect(GAME_WIDTH/2-2,7*GAME_HEIGHT/10,4,GAME_HEIGHT/10+5);
+    ctx.fillRect(GAME_WIDTH/2-2,7*GAME_HEIGHT/10,4,GAME_HEIGHT/10+5); // draw net
+
+    scoreBoard.render(ctx, canvas);
 
     for(var slime in slimes){
       slime.render(ctx, canvas);
     }
 
     ball.render(ctx, canvas);
+  }
+
+  // player = true for left, false for right
+  void score(bool player){
+    if(player){
+      scoreBoard.player1Score++;
+      scoreBoard.player2Score--;
+    }else{
+      scoreBoard.player1Score--;
+      scoreBoard.player2Score++;
+    }
+    initRound(player);
   }
 
   void initRound(bool server){
@@ -81,6 +98,54 @@ class Game implements AbstractGame {
     slimes[1].y = 0;
     slimes[1].velocityX = 0;
     slimes[1].velocityY = 0;
+  }
+
+}
+
+class ScoreBoard{
+  int winBy;
+  int player1Score;
+  int player2Score;
+
+  ScoreBoard({this.winBy: DEFAULT_WIN_BY}){
+    player1Score = winBy;
+    player2Score = winBy;
+  }
+
+  void render(CanvasRenderingContext2D ctx, 
+              CanvasElement canvas){
+    
+    // render player 1's score balls
+    for(var i=0;i<player1Score;i++){
+      renderBall(ctx, 
+                 canvas, 
+                 SCOREBOARD_MARGIN+i*(2*SCOREBOARD_RADII + SCOREBOARD_PADDING),
+                 SCOREBOARD_HEIGHT,
+                 SLIME_1_COLOR);
+    }
+
+    for(var i=0;i<player2Score;i++){
+      renderBall(ctx, 
+                 canvas, 
+                 GAME_WIDTH-(SCOREBOARD_MARGIN+i*(2*SCOREBOARD_RADII + SCOREBOARD_PADDING))-SCOREBOARD_RADII,
+                 SCOREBOARD_HEIGHT,
+                 SLIME_2_COLOR);
+    }
+  }
+
+  void renderBall(CanvasRenderingContext2D ctx,
+                  CanvasElement canvas,
+                  int x,
+                  int y,
+                  String color){
+    final xPix = x;
+    final yPix = y;
+    final radiusPix = SCOREBOARD_RADII;
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(xPix, yPix, radiusPix, 0, 2*Math.PI);
+    ctx.fill();
   }
 
 }
@@ -195,9 +260,9 @@ class Ball extends GameObject {
 
     if(y < 0){
       if(x > 500){
-        GameObject.game.initRound(true);
+        GameObject.game.score(true);
       } else {
-        GameObject.game.initRound(false);
+        GameObject.game.score(false);
       }
     }
 
